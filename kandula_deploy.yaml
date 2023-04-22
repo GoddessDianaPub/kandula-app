@@ -1,0 +1,29 @@
+# This will set the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables inside the container
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kandula-app
+  annotations:
+    iam.amazonaws.com/role: arn:aws:iam::735911875499:role/kubernetes-ec2-role
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kandula-app
+  template:
+    metadata:
+      labels:
+        app: kandula-app
+    spec:
+      containers:
+      - name: kandula-app
+        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula
+        ports:
+        - containerPort: 5000
+#        env:
+#        - name: AWS_ACCESS_KEY_ID
+#          value: "your-access-key"
+#        - name: AWS_SECRET_ACCESS_KEY
+#          value: "your-secret-key"
+

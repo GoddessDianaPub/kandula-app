@@ -1,0 +1,15 @@
+#Exposing the pod to access the app using a web browser
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kandula-app
+spec:
+  selector:
+    app: kandula-app
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+

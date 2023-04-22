@@ -1,0 +1,45 @@
+#This will create the kandula app
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kandula-app
+  namespace: kandula
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kandula-app
+  template:
+    metadata:
+      labels:
+        app: kandula-app
+    spec:
+      serviceAccountName: opsschool-sa
+      containers:
+      - name: kandula-app
+        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:latest
+        env:
+        - name: FLASK_APP
+          value: "run.py"
+        - name: FLASK_DEBUG
+          value: "1"
+        ports:
+        - containerPort: 5000
+
+---
+#Exposing the pod to access the app using a web browser
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kandula-service
+  namespace: kandula
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: kandula-app
