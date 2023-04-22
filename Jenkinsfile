@@ -2,7 +2,7 @@ pipeline {
 
     agent {
         node {
-            label 'jenkins-agent-1'
+            label 'linux'
         }
     }
     
@@ -39,12 +39,6 @@ pipeline {
              }
         }
         
-        // Restarting docker     
-    //    stage ('Restart docker') {
-    //         steps {
-    //             sh 'sudo service docker restart'
-    //      }
-    //   }
          
         // Building Docker images
         stage('Building image') {
@@ -73,29 +67,15 @@ pipeline {
           }
         }
                 
-//         stage ('Delete the folder and the files that has copied from the cloned repo using Dockerfile') {
-//              steps {
-//                  sh "rm -rf /home/ec2-user/jenkins-agent/jenkins-agent/workspace/kandula"
-//                  sh "rm -rf /home/ec2-user/jenkins-agent/jenkins-agent/workspace/kandula@tmp"
-//           }
-//         }
         
-        stage ('Delete the cloned repo') {
-             steps {
-                 sh "rm -rf ${REPO_DIR}"
-          }
-        }
-        
-        stage ("Login to EKS") {
+        stage ("Update kubeconfig file") {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'eks.cred', namespace: '', serverUrl: '') {
+                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
                 }
               }
-            }
         
         stage ("Deploy to EKS") {
             steps {
-                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
                 sh "kubectl apply -f kandula-app.yaml"
                 }
               } 
