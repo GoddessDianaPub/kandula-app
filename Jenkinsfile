@@ -15,8 +15,9 @@ pipeline {
     AWS_DEFAULT_REGION    = "us-east-1"
     IMAGE_REPO_NAME       = "kandula"
     IMAGE_TAG             = "latest"
-    REPOSITORY_URI_LATEST = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-    REPOSITORY_URI_BUILD  = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${env.BUILD_ID}"
+//     REPOSITORY_URI_LATEST = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+//     REPOSITORY_URI_BUILD  = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${env.BUILD_ID}"
+    REPOSITORY_URI        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
     REPO_DIR              = "kandula-app-k8s"
     PYTHON_APP_IMAGE      = "python:3.9-slim"
@@ -45,8 +46,8 @@ pipeline {
         stage('Building latest image') {
             steps{
                 script {
-                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-//                     sh "docker build -t ${IMAGE_REPO_NAME} ."
+//                     dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                    sh "docker build -t ${IMAGE_REPO_NAME} ."
                 }
             }
         }
@@ -55,26 +56,26 @@ pipeline {
         stage('Pushing latest to ECR') {
             steps{
                 script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI_LATEST}"
-                    sh "docker push ${REPOSITORY_URI_LATEST}"
+                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${IMAGE_TAG}"
+                    sh "docker push ${REPOSITORY_URI}:${IMAGE_TAG}"
                 }
             }
         }
         
-        stage('Building build No. image') {
-            steps{
-                script {
-                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${env.BUILD_ID}"
+//         stage('Building build No. image') {
+//             steps{
+//                 script {
+//                     dockerImage = docker.build "${IMAGE_REPO_NAME}:${env.BUILD_ID}"
 //                     sh "docker build -t ${IMAGE_REPO_NAME} ."
-                }
-            }
-        }
+//                 }
+//             }
+//         }
         
         stage('Pushing build No. to ECR') {
             steps{
                 script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI_BUILD}"
-                    sh "docker push ${REPOSITORY_URI_BUILD}"
+                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${env.BUILD_ID}"
+                    sh "docker push ${REPOSITORY_URI}:${env.BUILD_ID}"
                 }
             }
         }
