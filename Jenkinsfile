@@ -61,13 +61,13 @@ pipeline {
             }
         }
         
-//         stage('Building build No. image') {
-//             steps{
-//                 script {
-//                     dockerImage = docker.build "${IMAGE_REPO_NAME}:${env.BUILD_ID}"
-//                 }
-//             }
-//         }
+        stage('Building build No. image') {
+            steps{
+                script {
+                    sh "docker build -t ${IMAGE_REPO_NAME} ."
+                }
+            }
+        }
         
         stage('Pushing build No. to ECR') {
             steps{
