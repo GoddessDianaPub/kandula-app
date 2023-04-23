@@ -15,8 +15,6 @@ pipeline {
     AWS_DEFAULT_REGION    = "us-east-1"
     IMAGE_REPO_NAME       = "kandula"
     IMAGE_TAG             = "latest"
-//     REPOSITORY_URI_LATEST = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-//     REPOSITORY_URI_BUILD  = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${env.BUILD_ID}"
     REPOSITORY_URI        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
     REPO_DIR              = "kandula-app-k8s"
