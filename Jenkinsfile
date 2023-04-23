@@ -96,11 +96,8 @@ pipeline {
 //                 }
 //             }
 //         }    
- 
-  }
- } 
 
-post {
+    post {
     always {
         script {
             def status = currentBuild.currentResult // Get the result of the current build
@@ -113,3 +110,7 @@ post {
         }
     }
 }
+        
+  }
+ } 
+
