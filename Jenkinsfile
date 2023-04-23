@@ -16,7 +16,7 @@ pipeline {
     IMAGE_REPO_NAME     = "kandula"
     IMAGE_TAG           = "latest"
     REPOSITORY_URI      = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-    REPO_URL            = "https://github.com/opsschool-project/kandula-app-k8s.git"
+    REPO_URL            = "https://github.com/GoddessDianas/kandula-app.git"
     REPO_DIR            = "kandula-app-k8s"
     PYTHON_APP_IMAGE    = "python:3.9-slim"
     CLUSTER_NAME        = "opsschool-eks-diana"
@@ -44,13 +44,13 @@ pipeline {
         stage('Building image') {
             steps{
                 script {
-                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                    dockerImage = docker.build "${IMAGE_REPO_NAME}"
                 }
             }
         }
         
          // Uploading Docker images into AWS ECR
-        stage('Pushing to ECR') {
+        stage('Pushing latest to ECR') {
             steps{
                 script {
                     sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}"
@@ -58,15 +58,15 @@ pipeline {
                 }
             }
         }
-                      
-        stage ('Delete the docker images') {
-             steps {
-                 sh "docker rmi -f ${PYTHON_APP_IMAGE}"
-                 sh "docker rmi -f ${REPOSITORY_URI}"
-                 sh "docker rmi -f ${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-          }
+   
+        stage('Pushing build No. to ECR') {
+            steps{
+                script {
+                    sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}"
+                    sh "docker push ${REPOSITORY_URI}"
+                }
+            }
         }
-                
         
         stage ("Update kubeconfig file") {
             steps {
