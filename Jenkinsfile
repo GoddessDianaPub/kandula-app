@@ -11,15 +11,16 @@ pipeline {
 //   }
     
     environment {
-    AWS_ACCOUNT_ID      = "735911875499"
-    AWS_DEFAULT_REGION  = "us-east-1"
-    IMAGE_REPO_NAME     = "kandula"
-    IMAGE_TAG           = "latest"
-    REPOSITORY_URI      = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-    REPO_URL            = "https://github.com/GoddessDianas/kandula-app.git"
-    REPO_DIR            = "kandula-app-k8s"
-    PYTHON_APP_IMAGE    = "python:3.9-slim"
-    CLUSTER_NAME        = "opsschool-eks-diana"
+    AWS_ACCOUNT_ID        = "735911875499"
+    AWS_DEFAULT_REGION    = "us-east-1"
+    IMAGE_REPO_NAME       = "kandula"
+    IMAGE_TAG             = "latest"
+    REPOSITORY_URI_LATEST = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+    REPOSITORY_URI_BUILD  = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${env.BUILD_ID}"
+    REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
+    REPO_DIR              = "kandula-app-k8s"
+    PYTHON_APP_IMAGE      = "python:3.9-slim"
+    CLUSTER_NAME          = "opsschool-eks-diana"
     }
     
     stages {   
@@ -54,8 +55,8 @@ pipeline {
         stage('Pushing latest to ECR') {
             steps{
                 script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}"
-                    sh "docker push ${REPOSITORY_URI}"
+                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI_LATEST}"
+                    sh "docker push ${REPOSITORY_URI_LATEST}"
                 }
             }
         }
@@ -71,8 +72,8 @@ pipeline {
         stage('Pushing build No. to ECR') {
             steps{
                 script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}"
-                    sh "docker push ${REPOSITORY_URI}"
+                    sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI_BUILD}"
+                    sh "docker push ${REPOSITORY_URI_BUILD}"
                 }
             }
         }
