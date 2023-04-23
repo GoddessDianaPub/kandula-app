@@ -45,8 +45,8 @@ pipeline {
         stage('Building latest image') {
             steps{
                 script {
-//                     dockerImage = docker.build "${IMAGE_REPO_NAME} ."
-                    sh "docker build -t ${IMAGE_REPO_NAME} ."
+                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+//                     sh "docker build -t ${IMAGE_REPO_NAME} ."
                 }
             }
         }
@@ -64,7 +64,8 @@ pipeline {
         stage('Building build No. image') {
             steps{
                 script {
-                    sh "docker build -t ${IMAGE_REPO_NAME} ."
+                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${env.BUILD_ID}"
+//                     sh "docker build -t ${IMAGE_REPO_NAME} ."
                 }
             }
         }
