@@ -69,17 +69,17 @@ pipeline {
             }
         }
         
-        stage ("Update kubeconfig file") {
-            steps {
-                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-                }
-              }
+//         stage ("Update kubeconfig file") {
+//             steps {
+//                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+//                 }
+//               }
         
-        stage ("Deploy to EKS") {
-            steps {
-                sh "kubectl apply -f kandula-app.yaml"
-                }
-              } 
+//         stage ("Deploy to EKS") {
+//             steps {
+//                 sh "kubectl apply -f kandula-app.yaml"
+//                 }
+//               } 
           
         
 //         stage('Slack notifications') {
