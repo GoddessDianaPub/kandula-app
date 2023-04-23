@@ -46,7 +46,6 @@ pipeline {
         stage('Building latest image') {
             steps{
                 script {
-//                     dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
                     sh "docker build -t ${IMAGE_REPO_NAME} ."
                 }
             }
@@ -62,14 +61,6 @@ pipeline {
             }
         }
         
-//         stage('Building build No. image') {
-//             steps{
-//                 script {
-//                     dockerImage = docker.build "${IMAGE_REPO_NAME}:${env.BUILD_ID}"
-//                     sh "docker build -t ${IMAGE_REPO_NAME} ."
-//                 }
-//             }
-//         }
         
         stage('Pushing build No. to ECR') {
             steps{
@@ -80,17 +71,17 @@ pipeline {
             }
         }
         
-//         stage ("Update kubeconfig file") {
-//             steps {
-//                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-//                 }
-//               }
+        stage ("Update kubeconfig file") {
+            steps {
+                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+                }
+              }
         
-//         stage ("Deploy to EKS") {
-//             steps {
-//                 sh "kubectl apply -f kandula-app.yaml"
-//                 }
-//               } 
+        stage ("Deploy to EKS") {
+            steps {
+                sh "kubectl apply -f kandula-app.yaml"
+                }
+              } 
           
         
         stage('Slack notifications') {
