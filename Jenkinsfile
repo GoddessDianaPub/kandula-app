@@ -82,27 +82,34 @@ pipeline {
               } 
           
         
-        stage('Slack notifications') {
-            steps {
-                script {
-                    def status = currentBuild.currentResult // Get the result of the current build
-                    def message = status == 'SUCCESS' ? "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} succeeded!" : "Build #${env.BUILD_NUMBER} failed!"
-//      (<${env.BUILD_URL}|Open>)         
-                    try {
-                        slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
-                    } catch (Exception err) {
-                        echo "Slack notification failed with error: ${e.getMessage()}"
-                    }
-//                  post {
-//                     always {
-//                         echo "Build finished with ${end}:${JOB_NAME} #${BUILD_NUMBER}"
+//         stage('Slack notifications') {
+//             steps {
+//                 script {
+//                     def status = currentBuild.currentResult // Get the result of the current build
+//                     def message = status == 'SUCCESS' ? "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} succeeded!" : "Build #${env.BUILD_NUMBER} failed!"
+// //      (<${env.BUILD_URL}|Open>)         
+//                     try {
+//                         slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
+//                     } catch (Exception err) {
+//                         echo "Slack notification failed with error: ${e.getMessage()}"
 //                     }
-//                   }        
-             
-                }
-            }
-        }    
-     
+//                 }
+//             }
+//         }    
  
   }
- }   
+ } 
+
+post {
+    always {
+        script {
+            def status = currentBuild.currentResult // Get the result of the current build
+            def message = status == 'SUCCESS' ? "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} succeeded!" : "Build #${env.BUILD_NUMBER} failed!"
+            try {
+                slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
+            } catch (Exception err) {
+                echo "Slack notification failed with error: ${e.getMessage()}"
+            }
+        }
+    }
+}
