@@ -69,6 +69,12 @@ pipeline {
             }
         }
         
+//         stage ('Delete latest image') {
+//              steps {
+//                  sh "docker rmi -f ${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+//               }
+//           }
+        
 //         stage ("Update kubeconfig file") {
 //             steps {
 //                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
