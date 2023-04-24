@@ -87,7 +87,9 @@ pipeline {
 //                     }
 //                 }
 //             }
-//         }    
+//         }  
+        
+    }
         
     post {
     always {
@@ -97,9 +99,9 @@ pipeline {
         failure {
             slackSend channel: 'jenkins-notifications', color: '#ff0000', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} failed!"             
         }
-     }
+      }
     }
 //  
-      }
-    } 
+//       }
+//     } 
 
