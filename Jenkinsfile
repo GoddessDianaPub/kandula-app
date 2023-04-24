@@ -6,9 +6,9 @@ pipeline {
         }
     }
     
-    options {
-       timeout(time: 1, unit: 'MINUTES') // set the timeout to 5 minutes
-    }
+//     options {
+//        timeout(time: 1, unit: 'MINUTES') // set the timeout to 5 minutes
+//     }
     
     environment {
     AWS_ACCOUNT_ID        = "735911875499"
@@ -38,7 +38,13 @@ pipeline {
                 }
              }
         }
-        
+         
+        // Restarting docker     
+        stage ('Restart docker') {
+             steps {
+                 sh 'sudo service docker restart'
+          }
+        }
          
         // Building Docker images
         stage('Building latest image') {
