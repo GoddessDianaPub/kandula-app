@@ -6,15 +6,10 @@ pipeline {
         }
     }
     
-//     options {
-//        timeout(time: 1, unit: 'MINUTES') // set the timeout to 5 minutes
-//     }
-    
     environment {
     AWS_ACCOUNT_ID        = "735911875499"
     AWS_DEFAULT_REGION    = "us-east-1"
     IMAGE_REPO_NAME       = "kandula"
-    IMAGE_TAG             = "latest"
     REPOSITORY_URI        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
     REPO_DIR              = "kandula-app-k8s"
@@ -103,6 +98,7 @@ pipeline {
             slackSend channel: 'jenkins-notifications', color: '#ff0000', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} failed!"             
         }
      }
+   }
 //  
       }
     } 
