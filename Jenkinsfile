@@ -1,10 +1,11 @@
-def notifySlack(buildStatus = 'STARTED') {
+def notifySlack(buildStatus = null) {
     // Build status of null means success.
-//     buildStatus = buildStatus ?: 'SUCCESS'
+//     buildStatus = buildStatus ? : 'SUCCESS'
 
     def color
 
-    if (buildStatus == 'STARTED') {
+    if (buildStatus == null) {
+        buildStatus = 'STARTED'
         color = '#f9c815'
     } else if (buildStatus == 'SUCCESS') {
         color = '#5dff54'
@@ -71,7 +72,7 @@ pipeline {
         stage ('Pushing build No. to ECR') {
             steps {
                 script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}:${env.BUILD_ID}"
+//                     sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}:${env.BUILD_ID}"
                     sh "docker push ${REPOSITORY_URI}:${env.BUILD_ID}"
                 }
             }
