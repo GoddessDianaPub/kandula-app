@@ -5,18 +5,18 @@ def notifySlack(buildStatus = 'STARTED') {
     def color
 
     if (buildStatus == 'STARTED') {
-        color = '#D4DADF'
+        color = '#f9c815'
     } else if (buildStatus == 'SUCCESS') {
-        color = '#BDFFC3'
+        color = '#5dff54'
     } else if (buildStatus == 'UNSTABLE') {
-        color = '#FFFE89'
+        color = '#fffe89'
     } else {
-        color = '#FF9FA1'
+        color = '#ff0000'
     }
 
-    def msg = "${buildStatus}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
+    def msg = "${buildStatus}: Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER}"
 
-    slackSend(color: color, message: msg)
+    slackSend(color: color, message: msg, channel: '#jenkins-notifications')
 }
 
 pipeline {
