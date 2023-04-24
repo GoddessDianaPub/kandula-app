@@ -64,7 +64,7 @@ pipeline {
         stage ('Building latest image') {
             steps {
                 script {
-                    sh "docker build -t ${IMAGE_REPO_NAME}:${env.BUILD_ID} ."
+                    sh "docker build -t ${REPOSITORY_URI}:${env.BUILD_ID} ."
                 }
             }
         }
@@ -72,7 +72,7 @@ pipeline {
         stage ('Pushing build No. to ECR') {
             steps {
                 script {
-//                     sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}:${env.BUILD_ID}"
+//                     sh "docker tag ${IMAGE_REPO_NAME}:${LATEST_TAG} ${REPOSITORY_URI}:${env.BUILD_ID}"
                     sh "docker push ${REPOSITORY_URI}:${env.BUILD_ID}"
                 }
             }
