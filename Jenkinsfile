@@ -96,7 +96,7 @@ pipeline {
         always {
             notifySlack(currentBuild.result)
             script {
-                deleteDir()
+                deleteDir() //built-in step to clean up the workspace
             }
         }
     }
