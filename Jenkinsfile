@@ -75,14 +75,25 @@ pipeline {
 
     }
         
-    post {
-        always {
-            success {
-                slackSend channel: '#jenkins-notifications', color: '#36a64f', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} succeeded!"
-            }
-            failure {
-                slackSend channel: '#jenkins-notifications', color: '#ff0000', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} failed!"             
-            }
-        }
+   post {
+       always {
+        publishHTML target: [
+              allowMissing: false,
+              alwaysLinkToLastBuild: false,
+              keepAll: true,
+            ]
+       }
+       started {
+           slackSend color: '#f9c815', channel: '#jenkins-notifications', message: "BUILD STARTED: Job name: ${env.JOB_NAME}\nBuild ${env.BUILD_NUMBER}"
+       }
+       success {
+           slackSend color: '#36a64f', channel: '#jenkins-notifications', message: "BUILD SUCCESS: Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER}"
+       }
+       failure {
+           slackSend color: '#ff0000', channel: '#jenkins-notifications', message: "BUILD FAILURE: Job name: ${env.JOB_NAME}\n build ${env.BUILD_NUMBER}"
+       }
     }
+}
+
+
 }
