@@ -14,7 +14,7 @@ def notifySlack(buildStatus = 'STARTED') {
         color = '#ff0000'
     }
 
-    def msg = "${buildStatus}: Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER}"
+    def msg = "${buildStatus}:\n Job Name: ${env.JOB_NAME}\n Build Number #${env.BUILD_NUMBER}"
 
     slackSend(color: color, message: msg, channel: '#jenkins-notifications')
 }
