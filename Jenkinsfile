@@ -44,22 +44,20 @@ pipeline {
             }
         } 
         
-        stage ('Logging into AWS ECR') {
+        stage('Logging into AWS ECR') {
             steps {
-                withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'ACCESS_KEY_ID'), string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'SECRET_ACCESS_KEY')]) {
-                    script {
-                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-                    }
+                script {
+                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
                 }
-            }
-        }
-         
-        // Restarting Docker     
-        stage ('Start Docker') {
-             steps {
-                 sh 'sudo service docker start'
              }
         }
+         
+//         // Restarting Docker     
+//         stage ('Start Docker') {
+//              steps {
+//                  sh 'sudo service docker start'
+//              }
+//         }
          
         // Building Docker images
         stage ('Building latest image') {
@@ -79,16 +77,20 @@ pipeline {
             }
         }
         
-        // Deploying to EKS
-        stage ('Deploy to EKS') {
-             steps {
-                withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'ACCESS_KEY_ID'), string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'SECRET_ACCESS_KEY')]) {
-                    sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-                    sh "kubectl apply -f kandula-app.yaml"
-                }
-             }
-        }
-    }
+//         stage ("Login to EKS") {
+//              steps {
+//                  withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'eks.cred', namespace: '', serverUrl: '') {
+//                  }
+//                }
+//              }
+          
+//         stage ("Deploy to EKS") {
+//             steps {
+//                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+//                 sh "kubectl apply -f kandula-app.yaml"
+//                 }
+//               }         
+
     
     post {
         always {
