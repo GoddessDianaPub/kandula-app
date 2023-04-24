@@ -75,11 +75,11 @@ pipeline {
             }
         }
         
-//         stage ('Delete latest image') {
-//              steps {
-//                  sh "docker rmi -f ${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-//               }
-//           }
+        stage ('Delete latest image') {
+             steps {
+                 sh "docker rmi -f ${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+              }
+          }
         
 //         stage ("Update kubeconfig file") {
 //             steps {
