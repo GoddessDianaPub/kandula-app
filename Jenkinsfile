@@ -78,10 +78,10 @@ pipeline {
     post {
         always {
             success {
-                slackSend channel: 'jenkins-notifications', color: '#36a64f', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} succeeded!"
+                slackSend channel: '#jenkins-notifications', color: '#36a64f', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} succeeded!"
             }
             failure {
-                slackSend channel: 'jenkins-notifications', color: '#ff0000', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} failed!"             
+                slackSend channel: '#jenkins-notifications', color: '#ff0000', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} failed!"             
             }
         }
     }
