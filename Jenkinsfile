@@ -1,4 +1,4 @@
-def notifySlack(String buildStatus = 'STARTED') {
+def notifySlack(buildStatus = 'STARTED') {
     // Build status of null means success.
     buildStatus = buildStatus ?: 'SUCCESS'
 
@@ -20,23 +20,11 @@ def notifySlack(String buildStatus = 'STARTED') {
 }
 
 pipeline {
-
     agent {
         node {
             label 'linux'
-            }
-            try {
-                notifySlack()
-
-                // Existing build steps.
-            } catch (e) {
-                currentBuild.result = 'FAILURE'
-                throw e
-            } finally {
-                notifySlack(currentBuild.result)
-            }
-        }   
-        
+        }
+    }
     
     environment {
         AWS_ACCOUNT_ID        = "735911875499"
@@ -49,25 +37,25 @@ pipeline {
         CLUSTER_NAME          = "opsschool-eks-diana"
     }
     
-    stages {   
-        
+    stages {
         stage ('Cloning Git') {
             steps {
-                git url: "${REPO_URL}", branch: 'main',
-                    credentialsId: 'Github_token'
+                git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
             }
         } 
         
         stage ('Logging into AWS ECR') {
             steps {
-                script {
-                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'ACCESS_KEY_ID'), string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'SECRET_ACCESS_KEY')]) {
+                    script {
+                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                    }
                 }
             }
         }
          
-        // Restarting docker     
-        stage ('Start docker') {
+        // Restarting Docker     
+        stage ('Start Docker') {
              steps {
                  sh 'sudo service docker start'
              }
@@ -82,7 +70,6 @@ pipeline {
             }
         }
       
-        
         stage ('Pushing build No. to ECR') {
             steps {
                 script {
@@ -92,18 +79,20 @@ pipeline {
             }
         }
         
-        
-//         stage ("Update kubeconfig file") {
-//              steps {
-//                  sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-//              }
-//         }
-        
-//         stage ("Deploy to EKS") {
-//              steps {
-//                 sh "kubectl apply -f kandula-app.yaml"
-//              }
-//         } 
-
+        // Deploying to EKS
+        stage ('Deploy to EKS') {
+             steps {
+                withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'ACCESS_KEY_ID'), string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'SECRET_ACCESS_KEY')]) {
+                    sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+                    sh "kubectl apply -f kandula-app.yaml"
+                }
+             }
+        }
+    }
+    
+    post {
+        always {
+            notifySlack(currentBuild.result)
+        }
     }
 }
