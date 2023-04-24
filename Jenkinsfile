@@ -116,6 +116,8 @@ pipeline {
             slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
         }
     }
+}
+
 //  
       }
     } 
