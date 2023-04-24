@@ -40,9 +40,9 @@ pipeline {
         }
          
         // Restarting docker     
-        stage ('Restart docker') {
+        stage ('Start docker') {
              steps {
-                 sh 'sudo service docker restart'
+                 sh 'sudo service docker start'
           }
         }
          
