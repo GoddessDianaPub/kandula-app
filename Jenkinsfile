@@ -1,6 +1,6 @@
 def notifySlack(buildStatus = 'STARTED') {
     // Build status of null means success.
-    buildStatus = buildStatus ? : 'SUCCESS'
+    buildStatus = buildStatus ?: 'SUCCESS'
 
     def color
 
