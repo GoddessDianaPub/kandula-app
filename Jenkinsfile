@@ -24,14 +24,14 @@ pipeline {
     
     stages {   
         
-        stage('Cloning Git') {
+        stage ('Cloning Git') {
             steps {
                 git url: "${REPO_URL}", branch: 'main',
                  credentialsId: 'Github_token'
             }
         } 
         
-        stage('Logging into AWS ECR') {
+        stage ('Logging into AWS ECR') {
             steps {
                 script {
                     sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
@@ -47,39 +47,24 @@ pipeline {
         }
          
         // Building Docker images
-        stage('Building latest image') {
-            steps{
+        stage ('Building latest image') {
+            steps {
                 script {
-                    sh "docker build -t ${IMAGE_REPO_NAME} ."
+                    sh "docker build -t ${IMAGE_REPO_NAME}:${env.BUILD_ID} ."
                 }
             }
         }
+      
         
-         // Uploading Docker images into AWS ECR
-        stage('Pushing latest to ECR') {
-            steps{
+        stage ('Pushing build No. to ECR') {
+            steps {
                 script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${IMAGE_TAG}"
-                    sh "docker push ${REPOSITORY_URI}:${IMAGE_TAG}"
-                }
-            }
-        }
-        
-        
-        stage('Pushing build No. to ECR') {
-            steps{
-                script {
-                    sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${env.BUILD_ID}"
+                    sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}:${env.BUILD_ID}"
                     sh "docker push ${REPOSITORY_URI}:${env.BUILD_ID}"
                 }
             }
         }
         
-        stage ('Delete latest image') {
-             steps {
-                 sh "docker rmi -f ${IMAGE_REPO_NAME}:${IMAGE_TAG}"
-              }
-          }
         
 //         stage ("Update kubeconfig file") {
 //             steps {
@@ -110,15 +95,15 @@ pipeline {
 //         }    
         
     post {
-        always {
-            def status = currentBuild.currentResult // Get the result of the current build
-            def message = status == 'SUCCESS' ? "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} succeeded!" : "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} failed!"
-            slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
-        }
+    always {
+        def status = currentBuild.currentResult // Get the result of the current build
+        def message = status == 'SUCCESS' ? "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} succeeded!" : "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} failed!"
+        slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
     }
+  }
 }
 
 //  
-//       }
+      }
     } 
 
