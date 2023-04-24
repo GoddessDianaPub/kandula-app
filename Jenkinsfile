@@ -96,13 +96,13 @@ pipeline {
         
     post {
     always {
-        def status = currentBuild.currentResult // Get the result of the current build
-        def message = status == 'SUCCESS' ? "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} succeeded!" : "Job name: ${env.JOB_NAME}\n Build #${env.BUILD_NUMBER} failed!"
-        slackSend channel: 'jenkins-notifications', color: status == 'SUCCESS' ? '#36a64f' : '#ff0000', message: message, tokenCredentialId: 'slack.integration'
-    }
-  }
-}
-
+        success {
+            slackSend channel: 'jenkins-notifications', color: '#36a64f', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} succeeded!"
+        }
+        failure {
+            slackSend channel: 'jenkins-notifications', color: '#ff0000', message: "Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER} failed!"             
+        }
+     }
 //  
       }
     } 
