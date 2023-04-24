@@ -1,10 +1,42 @@
+def notifySlack(String buildStatus = 'STARTED') {
+    // Build status of null means success.
+    buildStatus = buildStatus ?: 'SUCCESS'
+
+    def color
+
+    if (buildStatus == 'STARTED') {
+        color = '#D4DADF'
+    } else if (buildStatus == 'SUCCESS') {
+        color = '#BDFFC3'
+    } else if (buildStatus == 'UNSTABLE') {
+        color = '#FFFE89'
+    } else {
+        color = '#FF9FA1'
+    }
+
+    def msg = "${buildStatus}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}:\n${env.BUILD_URL}"
+
+    slackSend(color: color, message: msg)
+}
+
 pipeline {
 
     agent {
         node {
             label 'linux'
-        }
-    }
+            }
+            try {
+                notifySlack()
+
+                // Existing build steps.
+            } catch (e) {
+                currentBuild.result = 'FAILURE'
+                throw e
+            } finally {
+                notifySlack(currentBuild.result)
+            }
+        }   
+        
     
     environment {
         AWS_ACCOUNT_ID        = "735911875499"
@@ -74,26 +106,4 @@ pipeline {
 //         } 
 
     }
-        
-   post {
-       always {
-        publishHTML target: [
-              allowMissing: false,
-              alwaysLinkToLastBuild: false,
-              keepAll: true,
-            ]
-       }
-       started {
-           slackSend color: '#f9c815', channel: '#jenkins-notifications', message: "BUILD STARTED: Job name: ${env.JOB_NAME}\nBuild ${env.BUILD_NUMBER}"
-       }
-       success {
-           slackSend color: '#36a64f', channel: '#jenkins-notifications', message: "BUILD SUCCESS: Job name: ${env.JOB_NAME}\n Build ${env.BUILD_NUMBER}"
-       }
-       failure {
-           slackSend color: '#ff0000', channel: '#jenkins-notifications', message: "BUILD FAILURE: Job name: ${env.JOB_NAME}\n build ${env.BUILD_NUMBER}"
-       }
-    }
-}
-
-
 }
