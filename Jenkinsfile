@@ -33,6 +33,7 @@ pipeline {
         REPO_DIR              = "kandula-app-k8s"
         PYTHON_APP_IMAGE      = "python:3.9-slim"
         CLUSTER_NAME          = "opsschool-eks-MyXav0Gs"
+        BUILD_ID              = "${currentBuild.number}"
     }
     
     stages {
@@ -61,7 +62,7 @@ pipeline {
         stage ('Building latest image') {
             steps {
                 script {
-                    sh "docker build -t ${REPOSITORY_URI}:${env.BUILD_ID} ."
+                    sh "docker build -t ${REPOSITORY_URI}:${BUILD_ID} ."
                 }
             }
         }
@@ -70,7 +71,7 @@ pipeline {
             steps {
                 script {
 //                     sh "docker tag ${IMAGE_REPO_NAME}:${LATEST_TAG} ${REPOSITORY_URI}:${env.BUILD_ID}"
-                    sh "docker push ${REPOSITORY_URI}:${env.BUILD_ID}"
+                    sh "docker push ${REPOSITORY_URI}:${BUILD_ID}"
                 }
             }
         }
@@ -85,7 +86,7 @@ pipeline {
         stage ("Deploy to EKS") {
             steps {
                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-                sh "kubectl apply -f kandula-app.yaml"
+                sh "kubectl apply -f kandula-app.yaml --set image.tag=${BUILD_ID}"
                 }
               }         
   
