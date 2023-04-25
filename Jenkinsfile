@@ -1,13 +1,12 @@
-def notifySlack(buildStatus = 'STARTED') {
+def notifySlack(buildStatus = 'STARTED', buildResult = null) {
     // Build status of null means success.
-    buildStatus = buildStatus ?: 'SUCCESS'
-
+//     buildStatus = buildStatus ?: 'SUCCESS'
     def color
 
-    if (buildStatus == 'SUCCESS') {
+    if (buildStatus == 'STARTED') {
         color = '#f9c815'
-//     } else if (buildStatus == 'SUCCESS') {
-//         color = '#5dff54'
+    } else if (buildStatus == 'SUCCESS') {
+        color = '#5dff54'
     } else if (buildStatus == 'UNSTABLE') {
         color = '#fffe89'
     } else {
@@ -15,7 +14,6 @@ def notifySlack(buildStatus = 'STARTED') {
     }
 
     def msg = "${buildStatus}:\n Job Name: ${env.JOB_NAME}\n Build Number #${env.BUILD_NUMBER}"
-
     slackSend(color: color, message: msg, channel: '#jenkins-notifications')
 }
 
@@ -94,7 +92,7 @@ pipeline {
     }
     post {
         always {
-            notifySlack(currentBuild.result)
+            notifySlack('STARTED', currentBuild.result)
             script {
                 deleteDir() //built-in step to clean up the workspace
             }
