@@ -82,12 +82,12 @@ pipeline {
 //                }
 //              }
           
-//         stage ("Deploy to EKS") {
-//             steps {
-//                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-//                 sh "kubectl apply -f kandula-app.yaml"
-//                 }
-//               }         
+        stage ("Deploy to EKS") {
+            steps {
+                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+                sh "kubectl apply -f kandula-app.yaml"
+                }
+              }         
 
     }
     post {
