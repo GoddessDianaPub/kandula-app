@@ -10,7 +10,7 @@ This app is for managing AWS ec2 instances and schedulling.
 ## Requirements
 
 - Change the jenkins alb address on the webhook configured acoording your URL.
-- 
+- In the environment section in Jenkinsfile, add a value to the CLUSTER_NAME variable.
 
 ## Notes
 
