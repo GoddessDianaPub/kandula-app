@@ -4,7 +4,7 @@ This app is for managing AWS ec2 instances and schedulling.
 
 - No change is going to be made until the deploy repo is going to be updated with the new release tag.
 - [Deploy repo link](https://github.com/GoddessDianas/terraform-aws-deploy)
-- [EKS repo link](https://github.com/GoddessDianas/terraform-eks-eks)
+- [EKS repo link](https://github.com/GoddessDianas/terraform-eks-k8s)
 
 
 ## Requirements
