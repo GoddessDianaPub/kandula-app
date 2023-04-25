@@ -1,6 +1,6 @@
-def notifySlack(buildStatus = 'STARTED', buildResult = null) {
+def notifySlack(buildStatus = 'STARTED') {
     // Build status of null means success.
-//     buildStatus = buildStatus ?: 'SUCCESS'
+    buildStatus = buildStatus ?: 'SUCCESS'
     def color
 
     if (buildStatus == 'STARTED') {
@@ -92,7 +92,7 @@ pipeline {
     }
     post {
         always {
-            notifySlack('STARTED', currentBuild.result)
+            notifySlack(currentBuild.result ?: 'STARTED')
             script {
                 deleteDir() //built-in step to clean up the workspace
             }
