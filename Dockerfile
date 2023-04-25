@@ -4,6 +4,7 @@ RUN mkdir /kandula
 WORKDIR /kandula
 COPY . /kandula/
 
+RUN pip install --upgrade pip
 RUN pip install virtualenv
 RUN virtualenv env
 ENV PATH="/kandula/env/bin:$PATH"
