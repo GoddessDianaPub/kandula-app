@@ -88,7 +88,7 @@ pipeline {
                 sh "kubectl apply -f kandula-app.yaml"
                 }
               }         
-
+ 
     }
     post {
         always {
