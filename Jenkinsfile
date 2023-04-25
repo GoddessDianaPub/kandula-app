@@ -4,10 +4,10 @@ def notifySlack(buildStatus = 'STARTED') {
 
     def color
 
-    if (buildStatus == 'STARTED') {
+    if (buildStatus == 'SUCCESS') {
         color = '#f9c815'
-    } else if (buildStatus == 'SUCCESS') {
-        color = '#5dff54'
+//     } else if (buildStatus == 'SUCCESS') {
+//         color = '#5dff54'
     } else if (buildStatus == 'UNSTABLE') {
         color = '#fffe89'
     } else {
