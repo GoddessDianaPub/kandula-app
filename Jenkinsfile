@@ -87,8 +87,8 @@ pipeline {
         stage ("Deploy to EKS") {
             steps {
                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
-                sh "kubectl set image deployment kandula-app kandula-app=${REPOSITORY_URI}:${env.BUILD_ID}"
-                sh "kubectl apply -f kandula-app.yaml"
+//                 sh "kubectl edit image deployment kandula-app kandula-app=${REPOSITORY_URI}:${env.BUILD_ID}"
+                sh "kubectl apply -f kandula-app.yaml --image=${REPOSITORY_URI}:${env.BUILD_ID}"
                 }
               }         
   
