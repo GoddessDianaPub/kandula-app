@@ -87,7 +87,7 @@ pipeline {
             steps {
                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
                 sh "sed -i 's|{IMAGE_TAG}|${env.BUILD_ID}|g' kandula-app.yaml"
-                sh "kubectl apply -f kandula-app.yaml --set image.tag=${env.BUILD_ID}"
+                sh "kubectl apply -f kandula-app.yaml"
                 }
               }         
   
