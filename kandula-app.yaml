@@ -18,7 +18,7 @@ spec:
       serviceAccountName: opsschool-sa
       containers:
       - name: kandula-app
-        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:${env.BUILD_ID}
+        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:${BUILD_ID}
         env:
         - name: FLASK_APP
           value: "run.py"
