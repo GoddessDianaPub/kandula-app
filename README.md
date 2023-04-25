@@ -19,6 +19,6 @@ This app is for managing AWS ec2 instances and schedulling.
 - Push commands can be found on ECR as follows: 
   - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin (Repo URI)
   - docker build -t (Repo URI):${env.BUILD_ID} .
-  - docker push <Repo URI>/kandula:${env.BUILD_ID}
+  - docker push (Repo URI)/kandula:${env.BUILD_ID}
 - For non interactive login (if you have any problem):
   - docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) (Repo URI)
