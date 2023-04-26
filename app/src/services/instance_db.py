@@ -21,11 +21,8 @@ def get_scheduling():
 
 # Retrieve the scheduling information and print the output
 
-scheduling_info = get_scheduling()
-print(scheduling_info)
-
-#instance_schedule = get_scheduling()
-#print(instance_schedule)
+instance_schedule = get_scheduling()
+print(instance_schedule)
 
 
 def create_scheduling(instance_id, shutdown_hour):
