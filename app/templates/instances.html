@@ -59,16 +59,6 @@
                             {% else %}
                                 <span class="badge badge-danger" style="font-size: 0.8em;">{{ instance.State }}</span>
                             {% endif %} 
-<!--                        {% for instance in ec2.instances.all() %}
-                            <div class="d-block">
-                                <span style="font-size: 0.8em;">Instance State: </span>
-                                {% if instance.state['Name'] == "running" %}
-                                    <span class="badge badge-success" style="font-size: 0.8em;">Running</span>
-                                {% else %}
-                                    <span class="badge badge-danger" style="font-size: 0.8em;">{{ instance.state['Name'] }}</span>
-                                {% endif %}
-                            </div>
-                         {% endfor %} -->
 
                     </div>
                     <div id="{{ instance.Id }}" class="panel-collapse collapse">
