@@ -21,9 +21,8 @@ def get_scheduling():
 
 # Retrieve the scheduling information and print the output
 
-scheduling_info = get_scheduling()
-
-print(scheduling_info)
+instance_schedule = get_scheduling()
+print(instance_schedule)
 
 
 def create_scheduling(instance_id, shutdown_hour):
@@ -45,3 +44,4 @@ def delete_scheduling(instance_id):
         print("Instance {} was removed from scheduling".format(instance_id))
     except Exception:
         print("Instance {} was not there to begin with".format(instance_id))
+

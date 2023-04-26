@@ -45,5 +45,10 @@ class InstanceData:
                     instance_data['NetworkInterfaceId'] = instance['NetworkInterfaces'][0]['NetworkInterfaceId']
 
                 instances_data.append(instance_data)
+                
+        # Sort the instances by the value of the "Name" tag
+        instances_data = sorted(instances_data, key=lambda i: (-1 if i['State'] == 'running' else 1, [t['Value'] for t in i['Tags'] if t['Key'] == 'Name']))
+      #  instances_data = sorted(instances_data, key=lambda i: [t['Value'] for t in i['Tags'] if t['Key'] == 'Name'])
+        
         return {'Instances': instances_data}
     
