@@ -28,7 +28,7 @@ instance_schedule = get_scheduling()
 print(instance_schedule)
 
 
-def create_scheduling(instance_id, shutdown_hour):
+def create_scheduling(instance_id, shutdown_hour, instance_schedule):
     # TODO: Implement a DB insert that creates the instance ID and the chosen hour in DB
     try:  # update
         index = [i['Id'] for i in instance_schedule["Instances"]].index(instance_id)
@@ -39,7 +39,7 @@ def create_scheduling(instance_id, shutdown_hour):
         print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_hour))
 
 
-def delete_scheduling(instance_id):
+def delete_scheduling(instance_id, instance_schedule):
     # TODO: Implement a delete query to remove the instance ID from scheduling
     try:
         index = [k['Id'] for k in instance_schedule["Instances"]].index(instance_id)
