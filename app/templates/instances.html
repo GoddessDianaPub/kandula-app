@@ -46,9 +46,9 @@
                                     {{ instance.Id }}
                                 {% endif %}
                                 {% if instance.State == "running" %}
-                                    <span class="badge badge-success">Running</span>
+                                    <span class="badge badge-success" style="font-size: 0.5em;">Running</span>
                                 {% else %}
-                                    <span class="badge badge-danger">{{ instance.State }}</span>
+                                    <span class="badge badge-danger" style="font-size: 0.5em;">{{ instance.State }}</span>
                                 {% endif %} 
                             </a>
                         </h4>
