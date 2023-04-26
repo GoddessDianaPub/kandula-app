@@ -3,7 +3,7 @@ from app.src.services.instance_db import create_scheduling, delete_scheduling, g
 
 def handle_instance(schedule_params):
     if schedule_params["instanceScheduleAction"] == "create":
-        create_scheduling(schedule_params["instanceId"], schedule_params["shutdownHour"])
+        create_scheduling(schedule_params["instanceId"], schedule_params["shutdownHour"], schedule_params["scheduling_info"])
     elif schedule_params["instanceScheduleAction"] == "delete":
         delete_scheduling(schedule_params["instanceIdToRemove"])
     else:
