@@ -21,14 +21,14 @@ def get_scheduling():
 
 # Retrieve the scheduling information and print the output
 
-#scheduling_info = get_scheduling()
-#print(scheduling_info)
+scheduling_info = get_scheduling()
+print(scheduling_info)
 
-instance_schedule = get_scheduling()
-print(instance_schedule)
+#instance_schedule = get_scheduling()
+#print(instance_schedule)
 
 
-def create_scheduling(instance_id, shutdown_hour, instance_schedule):
+def create_scheduling(instance_id, shutdown_hour, scheduling_info):
     # TODO: Implement a DB insert that creates the instance ID and the chosen hour in DB
     try:  # update
         index = [i['Id'] for i in instance_schedule["Instances"]].index(instance_id)
@@ -39,11 +39,12 @@ def create_scheduling(instance_id, shutdown_hour, instance_schedule):
         print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_hour))
 
 
-def delete_scheduling(instance_id, instance_schedule):
+def delete_scheduling(instance_id, scheduling_info):
+    # TODO: Implement a delete query to remove the instance ID from scheduling
     try:
-        index = next(i for i, x in enumerate(instance_schedule['Instances']) if x['Id'] == instance_id)
-        instance_schedule['Instances'].pop(index)
-        print("Instance {} was removed from scheduling".format(instance_id))
-    except StopIteration:
-        print("Instance {} was not found in scheduling".format(instance_id))
+        index = [k['Id'] for k in instance_schedule["Instances"]].index(instance_id, scheduling_info)
+        instance_schedule["Instances"].pop(index)
+        print("Instance {} was removed from scheduling".format(instance_id, scheduling_info))
+    except Exception:
+        print("Instance {} was not there to begin with".format(instance_id, scheduling_info))
 
