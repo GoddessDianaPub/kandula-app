@@ -34,7 +34,7 @@
 
                             </form>
                         </div>
-                        <h3 class="panel-title">
+                        <h4 class="panel-title">
                             <a data-toggle="collapse" href="#{{ instance.Id }}">
                                 {% if (instance.Tags is defined) and instance.Tags %}
                                     {% for tag in instance.Tags %}
@@ -51,7 +51,7 @@
                                     <span class="badge badge-danger">{{ instance.State }}</span>
                                 {% endif %}
                             </a>
-                        </h3>
+                        </h4>
 
                     </div>
                     <div id="{{ instance.Id }}" class="panel-collapse collapse">
