@@ -39,12 +39,12 @@ def create_scheduling(instance_id, shutdown_hour, scheduling_info):
         print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_hour))
 
 
-def delete_scheduling(instance_id, scheduling_info):
+def delete_scheduling(instance_id):
     # TODO: Implement a delete query to remove the instance ID from scheduling
     try:
-        index = [k['Id'] for k in instance_schedule["Instances"]].index(instance_id, scheduling_info)
+        index = [k['Id'] for k in instance_schedule["Instances"]].index(instance_id)
         instance_schedule["Instances"].pop(index)
-        print("Instance {} was removed from scheduling".format(instance_id, scheduling_info))
+        print("Instance {} was removed from scheduling".format(instance_id))
     except Exception:
-        print("Instance {} was not there to begin with".format(instance_id, scheduling_info))
+        print("Instance {} was not there to begin with".format(instance_id))
 
