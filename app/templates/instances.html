@@ -45,20 +45,20 @@
                                 {% else %}
                                     {{ instance.Id }}
                                 {% endif %}
-<!--                                {% if instance.State == "running" %}
-                                    <span class="badge badge-success" style="font-size: 0.3em;">Running</span>
+                                {% if instance.State == "running" %}
+                                    <span class="badge badge-success" style="font-size: 0.6em;">Running</span>
                                 {% else %}
-                                    <span class="badge badge-danger" style="font-size: 0.3em;">{{ instance.State }}</span>
-                                {% endif %} -->
+                                    <span class="badge badge-danger" style="font-size: 0.6em;">{{ instance.State }}</span>
+                                {% endif %} 
                             </a>
                         </h3>
-                        <div class="d-block">
+<!--                        <div class="d-block">
                             <span>Instance State: </span>
                             {% if instance.State == "running" %}
                                 <span class="badge badge-success">Running</span>
                             {% else %}
                                 <span class="badge badge-danger">{{ instance.State }}</span>
-                            {% endif %} 
+                            {% endif %} -->
 
                     </div>
                     <div id="{{ instance.Id }}" class="panel-collapse collapse">
