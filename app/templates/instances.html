@@ -52,14 +52,24 @@
                                 {% endif %} -->
                             </a>
                         </h3>
-                        <div class="d-block">
-                            <span style="font-size: 0.4em;">Instance State: </span>
+<!--                        <div class="d-block">
+                            <span style="font-size: 0.8em;">Instance State: </span>
                             {% if instance.State == "running" %}
-                                <span class="badge badge-success" style="font-size: 0.5em;">Running</span>
+                                <span class="badge badge-success" style="font-size: 0.6em;">Running</span>
                             {% else %}
-                                <span class="badge badge-danger" style="font-size: 0.5em;">{{ instance.State }}</span>
-                            {% endif %} 
-                    
+                                <span class="badge badge-danger" style="font-size: 0.6em;">{{ instance.State }}</span>
+                            {% endif %} -->
+                        {% for instance in ec2.instances.all() %}
+                            <div class="d-block">
+                                <span style="font-size: 0.8em;">Instance State: </span>
+                                {% if instance.state['Name'] == "running" %}
+                                    <span class="badge badge-success" style="font-size: 0.8em;">Running</span>
+                                {% else %}
+                                    <span class="badge badge-danger" style="font-size: 0.8em;">{{ instance.state['Name'] }}</span>
+                                {% endif %}
+                            </div>
+                         {% endfor %}
+
                     </div>
                     <div id="{{ instance.Id }}" class="panel-collapse collapse">
                         <div class="panel-body p-3 mb-2 bg-light text-dark">
