@@ -53,11 +53,11 @@
                             </a>
                         </h3>
                         <div class="d-block">
-                            <span style="font-size: 0.8em;">Instance State: </span>
+                            <span>Instance State: </span>
                             {% if instance.State == "running" %}
-                                <span class="badge badge-success" style="font-size: 0.8em;">Running</span>
+                                <span class="badge badge-success">Running</span>
                             {% else %}
-                                <span class="badge badge-danger" style="font-size: 0.8em;">{{ instance.State }}</span>
+                                <span class="badge badge-danger">{{ instance.State }}</span>
                             {% endif %} 
 
                     </div>
