@@ -1,0 +1,42 @@
+---
+# Creates a deplyoment with 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+  namespace: ingress-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: ingress-nginx
+  template:
+    metadata:
+      labels:
+        name: ingress-nginx
+    spec:
+      containers:
+      - name: nginx-ingress-controller
+        image: rancher/nginx-ingress-controller:nginx-1.7.0-rancher1
+      
+      args:
+        - /nginx-ingress-controller
+        - --configmap=$(POD_NAMESPACE) /nginx-config
+      
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+              
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+              
+      ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443

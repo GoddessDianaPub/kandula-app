@@ -1,0 +1,23 @@
+---
+#Creates admissions
+
+apiVersion: admissionregistration/v1
+kind: ValidatingWebhookConfiguration
+metadata: 
+  name: "pod-policy.example.com"
+
+webhooks:
+
+- name: "pod-policy.example.com"
+  clientConfig: 
+    service:
+      namespace: "<webhook-namespace>"
+      name: "webhook-service"
+    caBundle: "<tls cert>"
+    
+  rules: 
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE"]
+      resources:   ["pods"]
+      scope:       "Namespaced"

@@ -1,0 +1,14 @@
+---
+# Creates a persistent volume claim with storage class
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kandula-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: aws-storage
+  resources:
+    requests:
+      storage: 5Gi

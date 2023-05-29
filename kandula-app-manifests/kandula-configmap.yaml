@@ -1,0 +1,15 @@
+---
+
+#Creates a configMap to use variables
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kandula-config
+  namespace: kandula
+data:
+  FLASK_APP: "run.py"
+  FLASK_DEBUG: "1"
+#  APP_COLOR: green
+  AWS_ACCESS_KEY_ID: AKIA2WV6ECOV3NUUN26Y
+  AWS_SECRET_ACCESS_KEY: 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

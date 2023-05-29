@@ -1,0 +1,16 @@
+---
+# This role binding allows "jane" to edit pods in the "kandula" namespace.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-editor-binding
+  namespace: kandula
+subjects:
+- kind: User
+  name: jane
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-editor
+  apiGroup: rbac.authorization.k8s.io

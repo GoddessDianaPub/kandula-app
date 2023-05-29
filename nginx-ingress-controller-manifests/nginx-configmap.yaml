@@ -1,0 +1,9 @@
+---
+
+#Creates a configMap to use variables
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: ingress-nginx

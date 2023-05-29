@@ -1,0 +1,22 @@
+---
+# Creates nodeport service for kandula app
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kandula-service
+  namespace: kandula
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 5000
+    nodePort: 30001
+  selector:
+    app: kandula-app
+
+
+#To access the app via a browser You will need to:
+#Obtain the node-ip with: kubectl get nodes -o wide (or specify a specific node name).
+#Obtain the service nodeport with: kubectl get svc -o wide
+#Finally access it via browser: http://<node-ip>:<node-port>

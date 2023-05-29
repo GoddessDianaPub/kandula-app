@@ -1,4 +1,17 @@
-#This will create the kandula app
+#Creating a configMap to use variables
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kandula-config
+  namespace: kandula
+data:
+  FLASK_APP: "run.py"
+  FLASK_DEBUG: "1"
+  APP_COLOR: green
+
+---
+# Creating a deplyoment with kandula pod container
 
 apiVersion: apps/v1
 kind: Deployment
@@ -18,15 +31,13 @@ spec:
       serviceAccountName: opsschool-sa
       containers:
       - name: kandula-app
-        image: 
-        env:
-        - name: FLASK_APP
-          value: "run.py"
-        - name: FLASK_DEBUG
-          value: "1"
+        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:latest
         ports:
         - containerPort: 5000
-
+        envFrom:
+          - configMapRef:
+                name: kandula-config
+        
 ---
 #Exposing the pod to access the app using a web browser
 

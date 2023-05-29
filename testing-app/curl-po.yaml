@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default
+  namespace: kandula
+  resourceVersion: "348"
+  
+---- 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curl
+  namespace: kandula
+  resourceVersion: "835"
+spec:
+  containers:
+  - command:
+    - sleep
+    - "5000"
+    image: byrnedo/alpine-curl:latest
+    imagePullPolicy: Always
+    name: alpine-curl
+    resources: {}
+
+
+

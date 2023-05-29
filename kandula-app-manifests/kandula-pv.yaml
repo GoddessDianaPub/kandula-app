@@ -1,0 +1,15 @@
+---
+# Creates a persistent volume
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kandula-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+   storage: 10Gi
+  awsElasticBlockStore:
+    volumeID: 
+    fsType: 

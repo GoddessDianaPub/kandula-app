@@ -1,0 +1,7 @@
+---
+#Create a namespace for nginx ingress controleer
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
