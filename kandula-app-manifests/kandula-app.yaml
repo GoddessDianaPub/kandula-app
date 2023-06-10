@@ -13,7 +13,7 @@ metadata:
   namespace: kandula
   annotations:
     eks.amazonaws.com/role-arn-with-oidc: arn:aws:iam::735911875499:role/
-    eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:policy/opsschool-project-sa-eks-policy
+    eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa-eks-role
 
 ---
 #Creating a configMap to use variables
@@ -44,8 +44,8 @@ spec:
       labels:
         app: kandula-app
     spec:
-      containers:
       serviceAccountName: kandula-sa
+      containers:
       - name: kandula-app
         image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:latest
         ports:
