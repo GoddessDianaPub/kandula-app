@@ -8,4 +8,4 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["ingress"]
-  verbs: ["get", "watch", "list", "create", "delete"]
+  verbs: ["get", "watch", "list"]

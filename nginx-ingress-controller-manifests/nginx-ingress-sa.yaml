@@ -4,8 +4,8 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: nginx-ingress-serviceaccount
-  annotations:
-    e
+  name: nginx-ingress-sa
+#  annotations:
+    
 
 # need to create roles, clusterroles, rolebindings

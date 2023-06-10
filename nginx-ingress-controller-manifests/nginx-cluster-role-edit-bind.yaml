@@ -6,8 +6,8 @@ kind: ClusterRoleBinding
 metadata:
   name: edit-ingress-global
 subjects:
-- kind: Group
-  name: manager
+- kind: ServiceAccount
+  name: nginx-ingress-sa
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
