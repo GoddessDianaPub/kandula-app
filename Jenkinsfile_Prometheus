@@ -48,11 +48,28 @@ pipeline {
                 }
               }
               
-        stage ("Add prometheus.community helm repo") {
-              steps {
-                 sh 'helm repo add prometheus-community https://prometheus-community.github.io/helm-charts'
+        stage('Deploy Prometheus') {
+            steps {
+                script {
+                    // Add Prometheus Helm repository
+                    helmRepo(
+                        name: 'prometheus-community',
+                        url: 'https://prometheus-community.github.io/helm-charts'
+                    )
+                    
+                    // Update Helm repositories
+                    helmUpdate()
+                    
+                    // Install Prometheus using Helm
+                    helmInstall(
+                        chart: 'prometheus-community/kube-prometheus-stack',
+                        releaseName: 'prometheus-operator',
+                        namespace: 'monitoring',
+                        createNamespace: true
+                    )
                 }
-              }
+            }
+        }
         
         stage('Update Helm repositories') {
             steps {
