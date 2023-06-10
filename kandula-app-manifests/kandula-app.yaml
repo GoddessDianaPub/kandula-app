@@ -44,8 +44,8 @@ spec:
       labels:
         app: kandula-app
     spec:
-      serviceAccountName: kandula-sa
       containers:
+      serviceAccountName: kandula-sa
       - name: kandula-app
         image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:latest
         ports:
