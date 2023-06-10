@@ -20,7 +20,7 @@ def notifySlack(buildStatus = null) {
 pipeline {
     agent {
         node {
-            label 'linux2'
+            label 'linux'
         }
     }
     
