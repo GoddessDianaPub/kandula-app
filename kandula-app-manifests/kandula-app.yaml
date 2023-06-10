@@ -1,32 +1,9 @@
-<<<<<<< HEAD
-#Create a namespace for kandula
 
-=======
->>>>>>> eea24739882c5550f9fff3ad4e1b5a0e21cbbb40
 apiVersion: v1
 kind: Namespace
 metadata:
   name: kandula
-<<<<<<< HEAD
 
-
----
-#Creates a secret file to use variables
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kandula-secret
-  namespace: kandula
-data:
-  AWS_ACCESS_KEY_ID: QUtJQTJXVjZFQ09WM05VVU4yNlk=
-  AWS_SECRET_ACCESS_KEY: K2R3MDJuSDZ5a3pGcUdPb2ZuRXdLV0p2Q3RlMWVDb1NBQjRHRGlGag==
-
----
-
-#Creates a configMap to use variables
-=======
-  
 ---
 
 apiVersion: v1
@@ -37,7 +14,6 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn-with-oidc: arn:aws:iam::735911875499:role/
     eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa-eks-role
->>>>>>> eea24739882c5550f9fff3ad4e1b5a0e21cbbb40
 
 ---
 #Creating a configMap to use variables
