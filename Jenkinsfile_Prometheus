@@ -40,11 +40,9 @@ pipeline {
         
         stage("Login to EKS") {
             steps {
-                withKubeConfig(credentialsId: 'eks.cred', serverUrl: 'https://your-eks-api-server-url', clusterName: 'your-eks-cluster-name') {
-                    // Run any Kubernetes commands you need to perform
+                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
                 }
             }
-        }
         
         stage('Deploy Prometheus') {
             steps {
