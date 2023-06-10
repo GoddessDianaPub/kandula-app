@@ -1,54 +1,23 @@
+---
+#Creates a service account for kandula app pod
 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: jenkins-kubeconfig-sa
-  namespace: kube-system
-  
----
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: jenkins-kubeconfig-sa-secret
-  namespace: kube-system
+  name: kandula-sa
+  namespace: kandula
   annotations:
-    kubernetes.io/service-account.name: jenkins-kubeconfig-sa
-type: kubernetes.io/service-account-token
+    eks.amazonaws.com/role-arn-with-oidc: arn:aws:iam::735911875499:role/
+    eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa-eks-role
 
-#kubectl get secret jenkins-sa-secret -n jenkins -o jsonpath='{.metadata.creationTimestamp}'
----
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: jenkins-kubeconfig
-rules:
-- apiGroups: [""]
-  resources: ["pods", "services", "deployments"]
-  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
-- apiGroups: ["apps"]
-  resources: ["statefulsets", "daemonsets"]
-  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
-- apiGroups: ["batch"]
-  resources: ["jobs", "cronjobs"]
-  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
-- apiGroups: ["autoscaling"]
-  resources: ["horizontalpodautoscalers"]
-  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
-  
----
+#---
+#Creates a non expire token to use with sa
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: jenkins-kubeconfig-bind
-subjects:
-- kind: ServiceAccount
-  name: jenkins-kubeconfig-sa
-  namespace: kube-system
-roleRef:
-  kind: ClusterRole
-  name: jenkins-kubeconfig
-  apiGroup: rbac.authorization.k8s.io
-
+#apiVersion: v1
+#kind: Secret
+#type: kubernetes.io/service-account-token
+#metadata:
+#  name: kandula-sa-secret-token
+#  annotations:
+#    kubernetes.io/service-account.name: kandula-sa
