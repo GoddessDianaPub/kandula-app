@@ -14,6 +14,18 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn-with-oidc: arn:aws:iam::735911875499:role/
     eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa-eks-role
+    
+    
+---
+    
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kandula-sa-secret
+  namespace: kandula
+  annotations:
+    kubernetes.io/service-account.name: kandula-sa
+type: kubernetes.io/service-account-token 
 
 ---
 #Creating a configMap to use variables
