@@ -48,12 +48,12 @@ pipeline {
                 }
               }
               
-        stage ("Add prometheus.community helm repo") {
-              steps {
-                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkins.eks', namespace: '', serverUrl: '') {
-                  }
-                }
-              } 
+//        stage ("Add prometheus.community helm repo") {
+//              steps {
+//                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkins.eks', namespace: '', serverUrl: '') {
+//                  }
+//                }
+//              } 
   
     }
     post {
