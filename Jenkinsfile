@@ -32,7 +32,7 @@ pipeline {
         REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
         REPO_DIR              = "kandula-app-k8s"
         PYTHON_APP_IMAGE      = "python:3.9-slim"
-        CLUSTER_NAME          = "opsschool-eks-QVxVV5Mw"
+        CLUSTER_NAME          = "opsschool-eks-QP4igSZ5"
 //         BUILD_ID              = "${currentBuild.number}"
     }
     
@@ -86,7 +86,7 @@ pipeline {
         
         stage ("Deploy to EKS") {
             steps {
-                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+//                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
 //                 sh "kubectl edit image deployment kandula-app kandula-app=${REPOSITORY_URI}:${env.BUILD_ID}"
                 sh "sed -i 's|image: .*|image: ${REPOSITORY_URI}:${env.BUILD_ID}|g' kandula-app.yaml"
                 sh "kubectl apply -f kandula-app.yaml"
