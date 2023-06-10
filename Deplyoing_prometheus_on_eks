@@ -1,0 +1,67 @@
+def notifySlack(buildStatus = null) {
+    // Build status of null means success.
+    buildStatus = buildStatus ?: 'SUCCESS'
+    def color
+
+    if (buildStatus == 'SUCCESS') {
+        color = '#5dff54'
+//     } else if (buildStatus == 'STARTED') {
+//         color = '#f9c815'
+    } else if (buildStatus == 'UNSTABLE') {
+        color = '#fffe89'
+    } else {
+        color = '#ff0000'
+    }
+
+    def msg = "${buildStatus}:\n Job Name: ${env.JOB_NAME}\n Build Number #${env.BUILD_NUMBER}"
+    slackSend(color: color, message: msg, channel: '#jenkins-notifications')
+}
+
+pipeline {
+    agent {
+        node {
+            label 'linux'
+        }
+    }
+    
+    environment {
+        AWS_ACCOUNT_ID        = "735911875499"
+        AWS_DEFAULT_REGION    = "us-east-1"
+        IMAGE_REPO_NAME       = "kandula"
+        REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
+        REPO_DIR              = "kandula-app-k8s"
+        CLUSTER_NAME          = "opsschool-eks-QP4igSZ5"
+    }
+    
+    stages {
+        stage ('Cloning Git') {
+            steps {
+                git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
+            }
+        } 
+        
+        
+        stage ("Login to EKS") {
+              steps {
+                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkins.eks', namespace: '', serverUrl: '') {
+                  }
+                }
+              }
+              
+        stage ("Add prometheus.community helm repo") {
+              steps {
+                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkins.eks', namespace: '', serverUrl: '') {
+                  }
+                }
+              } 
+  
+    }
+    post {
+        always {
+            notifySlack(currentBuild.result)
+            script {
+                deleteDir() //built-in step to clean up the workspace
+            }
+        }
+    }
+}
