@@ -43,6 +43,24 @@ pipeline {
                 sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
                 }
             }
+            
+        stage('Check Helm Installation') {
+            steps {
+                script {
+                    def helmInstalled = sh(script: 'command -v helm', returnStatus: true)
+                    if (helmInstalled == 0) {
+                        echo 'Helm is already installed. Skipping installation.'
+                    } else {
+                        echo 'Helm not found. Installing Helm...'
+                        sh 'curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null'
+                        sh 'sudo apt-get install apt-transport-https --yes'
+                        sh 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list'
+                        sh 'sudo apt-get update'
+                        sh 'sudo apt-get install helm'
+                    }
+                }
+            }
+        }    
         
         stage('Deploy Prometheus') {
             steps {
