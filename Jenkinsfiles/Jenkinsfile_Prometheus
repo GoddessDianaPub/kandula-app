@@ -23,11 +23,9 @@ pipeline {
     }
     
     environment {
-        AWS_ACCOUNT_ID        = "735911875499"
         AWS_DEFAULT_REGION    = "us-east-1"
         IMAGE_REPO_NAME       = "kandula"
         REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
-        REPO_DIR              = "kandula-app-k8s"
         CLUSTER_NAME          = "opsschool-eks-QP4igSZ5"
     }
     
