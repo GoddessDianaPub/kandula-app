@@ -48,12 +48,24 @@ pipeline {
                 }
               }
               
-//        stage ("Add prometheus.community helm repo") {
-//              steps {
-//                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkins.eks', namespace: '', serverUrl: '') {
-//                  }
-//                }
-//              } 
+        stage ("Add prometheus.community helm repo") {
+              steps {
+                 sh 'helm repo add prometheus-community https://prometheus-community.github.io/helm-charts'
+                }
+              }
+        
+        stage('Update Helm repositories') {
+            steps {
+                sh 'helm repo update'
+            }
+        }
+        
+        stage('Deploy Prometheus') {
+            steps {
+                sh 'helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace'
+            }
+        }
+        
   
     }
     post {
