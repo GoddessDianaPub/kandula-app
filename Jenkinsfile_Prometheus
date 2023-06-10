@@ -5,15 +5,13 @@ def notifySlack(buildStatus = null) {
 
     if (buildStatus == 'SUCCESS') {
         color = '#5dff54'
-//     } else if (buildStatus == 'STARTED') {
-//         color = '#f9c815'
     } else if (buildStatus == 'UNSTABLE') {
         color = '#fffe89'
     } else {
         color = '#ff0000'
     }
 
-    def msg = "${buildStatus}:\n Job Name: ${env.JOB_NAME}\n Build Number #${env.BUILD_NUMBER}"
+    def msg = "${buildStatus}:\nJob Name: ${env.JOB_NAME}\nBuild Number #${env.BUILD_NUMBER}"
     slackSend(color: color, message: msg, channel: '#jenkins-notifications')
 }
 
@@ -34,62 +32,41 @@ pipeline {
     }
     
     stages {
-        stage ('Cloning Git') {
+        stage('Cloning Git') {
             steps {
                 git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
             }
         } 
         
-        
-        stage ("Login to EKS") {
-              steps {
-                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'eks.cred', namespace: '', serverUrl: '') {
-                  }
+        stage("Login to EKS") {
+            steps {
+                withKubeConfig(credentialsId: 'eks.cred', serverUrl: 'https://your-eks-api-server-url', clusterName: 'your-eks-cluster-name') {
+                    // Run any Kubernetes commands you need to perform
                 }
-              }
-              
+            }
+        }
+        
         stage('Deploy Prometheus') {
             steps {
                 script {
                     // Add Prometheus Helm repository
-                    helmRepo(
-                        name: 'prometheus-community',
-                        url: 'https://prometheus-community.github.io/helm-charts'
-                    )
+                    sh 'helm repo add prometheus-community https://prometheus-community.github.io/helm-charts'
                     
                     // Update Helm repositories
-                    helmUpdate()
+                    sh 'helm repo update'
                     
                     // Install Prometheus using Helm
-                    helmInstall(
-                        chart: 'prometheus-community/kube-prometheus-stack',
-                        releaseName: 'prometheus-operator',
-                        namespace: 'monitoring',
-                        createNamespace: true
-                    )
+                    sh 'helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace'
                 }
             }
         }
-        
-        stage('Update Helm repositories') {
-            steps {
-                sh 'helm repo update'
-            }
-        }
-        
-        stage('Deploy Prometheus') {
-            steps {
-                sh 'helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace'
-            }
-        }
-     }   
-  
     }
+    
     post {
         always {
             notifySlack(currentBuild.result)
             script {
-                deleteDir() //built-in step to clean up the workspace
+                deleteDir() // built-in step to clean up the workspace
             }
         }
     }
