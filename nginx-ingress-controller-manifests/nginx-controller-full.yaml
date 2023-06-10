@@ -95,7 +95,6 @@ spec:
     targetPort: 5000
     protocol: TCP
     name: kandula
-    nodePort: 30943
   selector:
     app: ingress-nginx
     
