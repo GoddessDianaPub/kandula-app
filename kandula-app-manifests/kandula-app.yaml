@@ -1,5 +1,21 @@
-#Creating a configMap to use variables
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kandula
+  
+---
 
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kandula-sa
+  namespace: kandula
+  annotations:
+    eks.amazonaws.com/role-arn-with-oidc: arn:aws:iam::735911875499:role/
+    eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa-eks-role
+
+---
+#Creating a configMap to use variables
 apiVersion: v1
 kind: ConfigMap
 metadata:
