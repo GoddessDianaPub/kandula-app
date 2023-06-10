@@ -1,4 +1,17 @@
 import boto3
+import psycopg2
+
+
+def get_db_connection():
+    # Replace the placeholders with your actual database credentials
+    conn = psycopg2.connect(
+        host='rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com:5432',
+        user='diana',
+        password='Aa123456!',
+        database='applicationdb0'
+    )
+    return conn
+
 
 def get_scheduling():
     # TODO: Implement a DB select query that gets all instance ids and their scheduled hours
