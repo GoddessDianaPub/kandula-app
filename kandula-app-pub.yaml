@@ -1,26 +1,9 @@
-#Create a namespace for kandula
-
 apiVersion: v1
 kind: Namespace
 metadata:
   name: kandula
 
-
 ---
-#Creates a secret file to use variables
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kandula-secret
-  namespace: kandula
-data:
-  AWS_ACCESS_KEY_ID: QUtJQTJXVjZFQ09WM05VVU4yNlk=
-  AWS_SECRET_ACCESS_KEY: K2R3MDJuSDZ5a3pGcUdPb2ZuRXdLV0p2Q3RlMWVDb1NBQjRHRGlGag==
-
----
-
-#Creates a configMap to use variables
 
 apiVersion: v1
 kind: ConfigMap
@@ -30,9 +13,20 @@ metadata:
 data:
   FLASK_APP: "run.py"
   FLASK_DEBUG: "1"
+  AWS_ACCESS_KEY_ID: AKIA2WV6ECOV3NUUN26Y
+  AWS_SECRET_ACCESS_KEY: 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
 
 ---
-# Creating a deplyoment with kandula pod container
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kandula-sa
+  namespace: kandula
+  annotations:
+    eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa
+
+---
 
 apiVersion: apps/v1
 kind: Deployment
@@ -49,20 +43,17 @@ spec:
       labels:
         app: kandula-app
     spec:
-      serviceAccountName: opsschool-sa
+      serviceAccountName: kandula-sa
       containers:
       - name: kandula-app
-        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:latest
+        image: public.ecr.aws/t9x8t6s4/kandula-pub:21
         ports:
         - containerPort: 5000
         envFrom:
           - configMapRef:
-                name: kandula-config
-          - secretRef:
-                name: kandula-secret
-        
+              name: kandula-config
+
 ---
-#Exposing the pod to access the app using a web browser
 
 apiVersion: v1
 kind: Service
@@ -70,16 +61,15 @@ metadata:
   name: kandula-service
   namespace: kandula
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 80
     targetPort: 5000
-    protocol: TCP
+    nodePort: 30001
   selector:
     app: kandula-app
 
-----
-#Creates HPA for memory and CPU
+---
 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
