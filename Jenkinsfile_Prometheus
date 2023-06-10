@@ -43,7 +43,7 @@ pipeline {
         
         stage ("Login to EKS") {
               steps {
-                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'jenkins.eks', namespace: '', serverUrl: '') {
+                 withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'eks.cred', namespace: '', serverUrl: '') {
                   }
                 }
               }
