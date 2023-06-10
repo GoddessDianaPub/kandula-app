@@ -1,0 +1,61 @@
+def notifySlack(buildStatus = null) {
+    // Build status of null means success.
+    buildStatus = buildStatus ?: 'SUCCESS'
+    def color
+
+    if (buildStatus == 'SUCCESS') {
+        color = '#5dff54'
+    } else if (buildStatus == 'UNSTABLE') {
+        color = '#fffe89'
+    } else {
+        color = '#ff0000'
+    }
+
+    def msg = "${buildStatus}:\nJob Name: ${env.JOB_NAME}\nBuild Number #${env.BUILD_NUMBER}"
+    slackSend(color: color, message: msg, channel: '#jenkins-notifications')
+}
+
+pipeline {
+    agent {
+        node {
+            label 'linux'
+        }
+    }
+    
+    environment {
+        AWS_DEFAULT_REGION    = "us-east-1"
+        IMAGE_REPO_NAME       = "kandula"
+        REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
+        CLUSTER_NAME          = "opsschool-eks-QP4igSZ5"
+    }
+    
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
+            }
+        } 
+        
+        stage("Login to EKS") {
+            steps {
+                sh "aws eks --region=${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+                }
+            }
+            
+        
+        stage('Deploy Ingress controller') {
+            steps {
+                sh "kubectl apply -f nginx-ingress-controller-manifests/nginx-controller-full.yaml"
+                }
+            }
+    }
+    
+    post {
+        always {
+            notifySlack(currentBuild.result)
+            script {
+                deleteDir() // built-in step to clean up the workspace
+            }
+        }
+    }
+}
