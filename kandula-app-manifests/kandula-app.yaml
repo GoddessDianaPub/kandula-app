@@ -53,8 +53,8 @@ spec:
         envFrom:
           - configMapRef:
                 name: kandula-config
-          - secretRef:
-                name: kandula-secret
+#          - secretRef:
+#                name: kandula-secret
         
 ---
 #Exposing the pod to access the app using a web browser
