@@ -15,20 +15,19 @@ metadata:
     eks.amazonaws.com/role-arn-with-oidc: arn:aws:iam::735911875499:role/opsschool-project-oidc-role
     eks.amazonaws.com/role-arn-sa-eks-role: arn:aws:iam::735911875499:role/opsschool-project-sa-eks-role
     
+---
     
-#---
-    
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: kandula-sa-secret
-#  namespace: kandula
-#  annotations:
-#    kubernetes.io/service-account.name: kandula-sa
-#type: kubernetes.io/service-account-token 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kandula-sa-secret
+  namespace: kandula
+  annotations:
+    kubernetes.io/service-account.name: kandula-sa
+type: kubernetes.io/service-account-token 
 
 ---
-#Creating a configMap to use variables
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -39,7 +38,6 @@ data:
   FLASK_DEBUG: "1"
 
 ---
-# Creating a deplyoment with kandula pod container
 
 apiVersion: apps/v1
 kind: Deployment
@@ -84,32 +82,15 @@ metadata:
   namespace: kandula
 spec:
   type: ClusterIP
-  ports:
-  - port: 80
-    targetPort: 5000
-    protocol: TCP
   selector:
     app: kandula-app
-
-
-#Exposing the pod to access the app using a web browser
-
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: kandula-service
-#  namespace: kandula
-#spec:
-#  type: LoadBalancer
-#  ports:
-#  - port: 80
-#    targetPort: 5000
-#    protocol: TCP
-#  selector:
-#    app: kandula-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
 
 ---
-#Creates HPA for memory and CPU
 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -161,4 +142,5 @@ spec:
       - type: Pods
         value: 2
         periodSeconds: 15
-      selectPolicy: Max    
+      selectPolicy: Max
+      

@@ -45,7 +45,7 @@ pipeline {
         
         stage('Deploy Ingress controller') {
             steps {
-                sh "kubectl apply -f nginx-ingress-controller-manifests/nginx-controller-full.yaml"
+                sh "kubectl apply -f nginx-ingress-controller-manifests/controller-v1.8.0.yaml"
                 }
             }
     }
