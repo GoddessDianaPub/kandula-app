@@ -26,7 +26,7 @@ pipeline {
         AWS_DEFAULT_REGION    = "us-east-1"
         IMAGE_REPO_NAME       = "kandula"
         REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
-        CLUSTER_NAME          = "opsschool-eks-QP4igSZ5"
+        CLUSTER_NAME          = "opsschool-eks-ierqczqI"
     }
     
     stages {
