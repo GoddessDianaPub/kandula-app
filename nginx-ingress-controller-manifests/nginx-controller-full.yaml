@@ -92,29 +92,46 @@ subjects:
 
 ---
 
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: ingress-nginx-service
+#  namespace: ingress-nginx
+#spec:
+#  type: LoadBalancer
+#  ports:
+#  - port: 80
+#    targetPort: 80
+#    protocol: TCP
+#    name: http
+#  - port: 443
+#    targetPort: 443
+#    protocol: TCP
+#    name: https
+#  - port: 5000
+#    targetPort: 5000
+#    protocol: TCP
+#    name: kandula
+#  selector:
+#    app: ingress-nginx
+
 apiVersion: v1
 kind: Service
 metadata:
   name: ingress-nginx-service
   namespace: ingress-nginx
 spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-    protocol: TCP
-    name: http
-  - port: 443
-    targetPort: 443
-    protocol: TCP
-    name: https
-  - port: 5000
-    targetPort: 5000
-    protocol: TCP
-    name: kandula
+  type: ClusterIP
   selector:
-    app: ingress-nginx
-    
+    name: ingress-nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      
 ---
 
 apiVersion: apps/v1
