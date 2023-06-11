@@ -21,13 +21,30 @@ metadata:
 
 ---
 
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kandula-sa-secret
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/service-account.name: ingress-nginx-sa
+type: kubernetes.io/service-account-token 
+
+---
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: ingress-nginx-edit
+  name: ingress-nginx-controller-cluster-role
 rules:
 - apiGroups: [""]
-  resources: ["ingress"]
+  resources: ["pods", "ingressclasses", "namespaces", "services", "endpoints"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["extensions"]
+  resources: ["ingresses"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingressclasses"]
   verbs: ["get", "watch", "list"]
 
 ---
@@ -35,43 +52,43 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: ingress-nginx-edit-bind
+  name: ingress-nginx-controller-cluster-role-bind
 subjects:
 - kind: ServiceAccount
   name: ingress-nginx-sa
   namespace: ingress-nginx
-  apiGroup: ""
 roleRef:
   kind: ClusterRole
-  name: ingress-nginx-edit
+  name: ingress-nginx-controller-cluster-role
   apiGroup: rbac.authorization.k8s.io
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
-  name: ingress-nginx-read
+  name: ingress-nginx-controller-role
+  namespace: ingress-nginx
 rules:
 - apiGroups: [""]
-  resources: ["ingress"]
-  verbs: ["get", "watch", "list"]
+  resources: ["configmaps"]
+  verbs: ["get", "create", "update"]
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
-  name: ingress-nginx-read-bind
+  name: ingress-nginx-controller-role-binding
+  namespace: ingress-nginx
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ingress-nginx-controller-role
 subjects:
 - kind: ServiceAccount
   name: ingress-nginx-sa
   namespace: ingress-nginx
-  apiGroup: ""
-roleRef:
-  kind: ClusterRole
-  name: ingress-nginx-read
-  apiGroup: rbac.authorization.k8s.io
 
 ---
 
@@ -115,6 +132,7 @@ spec:
       labels:
         name: ingress-nginx
     spec:
+      serviceAccountName: ingress-nginx-sa
       containers:
         - name: nginx-ingress-controller
           image: rancher/nginx-ingress-controller:nginx-1.7.0-rancher1
@@ -166,6 +184,3 @@ spec:
                 name: ingress-nginx-controller
                 port:
                   number: 5000
-                  
-
-
