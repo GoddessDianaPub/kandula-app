@@ -113,25 +113,8 @@ subjects:
 #    protocol: TCP
 #    name: kandula
 #  selector:
-#    app: ingress-nginx
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: ingress-nginx-service
-  namespace: ingress-nginx
-spec:
-  type: ClusterIP
-  selector:
-    name: ingress-nginx
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-    - protocol: TCP
-      port: 443
-      targetPort: 443
-      
+#    name: ingress-nginx
+     
 ---
 
 apiVersion: apps/v1
@@ -176,6 +159,25 @@ spec:
 #        - configMapRef:
 #            name: ingress-nginx-config  
 
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-service
+  namespace: ingress-nginx
+spec:
+  type: ClusterIP
+  selector:
+    name: ingress-nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      
 ---
 
 apiVersion: networking.k8s.io/v1
