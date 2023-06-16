@@ -1,0 +1,118 @@
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kandula
+  labels:
+    app: kandula
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kandula-sa
+  namespace: kandula
+  labels:
+    app: kandula
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::735911875499:role/opsschool-project-oidc-role
+    
+---
+    
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kandula-sa-secret
+  namespace: kandula
+  labels:
+    app: kandula
+  annotations:
+    kubernetes.io/service-account.name: kandula-sa
+type: kubernetes.io/service-account-token 
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kandula
+  namespace: kandula
+data:
+  FLASK_APP: "run.py"
+  FLASK_DEBUG: "1"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kandula-app
+  namespace: kandula
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kandula
+  template:
+    metadata:
+      labels:
+        app: kandula
+    spec:
+      serviceAccountName: kandula-sa
+      containers:
+      - name: kandula-app
+        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:24
+        ports:
+        - containerPort: 5000
+        envFrom:
+          - configMapRef:
+                name: kandula
+#          - secretRef:
+#                name: kandula-secret
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"  
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kandula-service
+  namespace: kandula
+spec:
+  type: ClusterIP
+  selector:
+    app: kandula
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+
+
+   
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: awscli
+  namespace: kandula
+  labels:
+    app: awscli
+spec:
+  serviceAccountName: kandula-sa
+  containers:
+  - image: amazon/aws-cli
+    command:
+      - "sleep"
+      - "604800"
+    imagePullPolicy: IfNotPresent
+    name: awscli
+  restartPolicy: Always

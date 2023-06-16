@@ -1,4 +1,5 @@
 from boto3 import client
+from datetime import datetime
 
 REGION_NAME = 'us-east-1'
 
@@ -35,9 +36,9 @@ class InstanceData:
                     'RootDeviceName': instance['RootDeviceName'],
                     'RootDeviceType': instance['RootDeviceType'],
                     'SecurityGroups': instance['SecurityGroups'],
-         #           'Tags': instance['Tags'],
                     'Tags': instance['Tags'] if any(tag['Key'] == 'Name' for tag in instance['Tags']) else [],
-                    'LaunchTime': instance['LaunchTime'].strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                    'LaunchTime': datetime.strptime(instance['LaunchTime'], "%Y-%m-%dT%H:%M:%S.%fZ"),
+                #    'LaunchTime': instance['LaunchTime'].strftime("%Y-%m-%dT%H:%M:%S.000Z"),
                     'StateReason': None if instance['State']['Name'] == 'running' else instance['StateTransitionReason'],
                 }
                 if instance['NetworkInterfaces']:
