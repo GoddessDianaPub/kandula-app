@@ -1,5 +1,5 @@
 import json
-psycopg2
+psycopg2_binary as psycopg2
 
 schema = "kandula"
 table_name = "not set"
