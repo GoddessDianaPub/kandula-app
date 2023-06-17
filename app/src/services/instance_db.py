@@ -106,4 +106,11 @@ def create_scheduling(os_type, shutdown_hour):
 
 
 def delete_scheduling(os_type):
-   
+    # Add indentation here
+    try:
+        # Delete scheduling logic
+        pass
+    except Exception as error:
+        print("ERROR:", error)
+
+
