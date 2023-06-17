@@ -12,4 +12,4 @@ json-logging
 flake8
 flake8-colors
 yamllint
-psycopg2
+psycopg2-binary
