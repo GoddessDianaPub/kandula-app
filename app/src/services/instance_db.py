@@ -1,6 +1,5 @@
 import json
-import psycopg2_binary as psycopg2
-psycopg2.extensions.register_adapter(dict, psycopg2.extras.Json)
+psycopg2
 
 schema = "kandula"
 table_name = "not set"
