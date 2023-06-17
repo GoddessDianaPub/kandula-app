@@ -97,22 +97,22 @@ spec:
 
 
    
----
+#---
 
-apiVersion: v1
-kind: Pod
-metadata:
-  name: awscli
-  namespace: kandula
-  labels:
-    app: awscli
-spec:
-  serviceAccountName: kandula-sa
-  containers:
-  - image: amazon/aws-cli
-    command:
-      - "sleep"
-      - "604800"
-    imagePullPolicy: IfNotPresent
-    name: awscli
-  restartPolicy: Always
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: awscli
+#  namespace: kandula
+#  labels:
+#    app: awscli
+#spec:
+#  serviceAccountName: kandula-sa
+#  containers:
+#  - image: amazon/aws-cli
+#    command:
+#      - "sleep"
+#      - "604800"
+#    imagePullPolicy: IfNotPresent
+#    name: awscli
+#  restartPolicy: Always
