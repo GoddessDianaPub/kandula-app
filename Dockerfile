@@ -4,7 +4,7 @@ RUN mkdir /kandula
 WORKDIR /kandula
 COPY . /kandula/
 
-RUN apt-get update && apt-get install -y libpq-dev
+RUN apt-get update && apt-get install -y postgresql-client
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
