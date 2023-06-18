@@ -79,5 +79,7 @@ def scheduler():
         instance_shutdown_scheduling.handle_instance(request.form)
 
     scheduled_instances = instance_shutdown_scheduling.get_scheduled_instances()
+    print("Type of scheduled_instances:", type(scheduled_instances))
+    print("Value of scheduled_instances:", scheduled_instances)
     return render_template('scheduler.html', title='Scheduling',
                            scheduled_instances=scheduled_instances["Instances"])
