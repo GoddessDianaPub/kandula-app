@@ -20,13 +20,16 @@ conn = psycopg2.connect(
 )
 
 
-def get_scheduling():
-    cursor = conn.cursor()
+def get_instance_name(instance_id):
+    # Replace with your logic to get the instance name based on the instance_id
+    pass
 
+
+def get_scheduling():
     try:
+        cursor = conn.cursor()
         query = "SELECT instance_id, scheduled_hours FROM {}".format(scheduler_table)
         cursor.execute(query)
-
         rows = cursor.fetchall()
 
         # Prepare the result in JSON format
@@ -42,16 +45,15 @@ def get_scheduling():
 
     except Exception as e:
         print("An error occurred while retrieving the scheduling:", str(e))
-        conn.rollback()
 
     finally:
-        cursor.close()
+        if cursor:
+            cursor.close()
 
 
 def create_scheduling(instance_id, shutdown_hour):
     try:
         cursor = conn.cursor()
-
         query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
         cursor.execute(query, (instance_id,))
         existing_instance = cursor.fetchone()
@@ -80,13 +82,13 @@ def create_scheduling(instance_id, shutdown_hour):
         conn.rollback()
 
     finally:
-        cursor.close()
+        if cursor:
+            cursor.close()
 
 
 def delete_scheduling(instance_id):
     try:
         cursor = conn.cursor()
-
         query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
         cursor.execute(query, (instance_id,))
         existing_instance = cursor.fetchone()
@@ -112,7 +114,8 @@ def delete_scheduling(instance_id):
         conn.rollback()
 
     finally:
-        cursor.close()
+        if cursor:
+            cursor.close()
 
 
 # Rollback the current transaction explicitly
