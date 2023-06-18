@@ -4,7 +4,8 @@ import psycopg2
 schema = "kandula"
 table_name = "not set"
 con = psycopg2.connect(
-    host="rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com:5432",
+    host="rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com",
+    port=5432,
     database="kandula",
     user="kandula",
     password="Aa123456!"
