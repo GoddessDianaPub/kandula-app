@@ -1,4 +1,5 @@
 import psycopg2
+from datetime import datetime
 
 # Variables
 host = "rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com"
@@ -22,23 +23,29 @@ conn = psycopg2.connect(
 def get_scheduling():
     cursor = conn.cursor()
 
-    query = "SELECT instance_id, scheduled_hours FROM {}".format(scheduler_table)
-    cursor.execute(query)
+    try:
+        query = "SELECT instance_id, scheduled_hours FROM {}".format(scheduler_table)
+        cursor.execute(query)
 
-    rows = cursor.fetchall()
+        rows = cursor.fetchall()
 
-    cursor.close()
+        # Prepare the result in JSON format
+        instance_schedule = []
+        for row in rows:
+            instance_id, scheduled_hours = row
+            instance_schedule.append({
+                "instance_id": instance_id,
+                "scheduled_hours": scheduled_hours
+            })
 
-    # Prepare the result in JSON format
-    instance_schedule = []
-    for row in rows:
-        instance_id, scheduled_hours = row
-        instance_schedule.append({
-            "instance_id": instance_id,
-            "scheduled_hours": scheduled_hours
-        })
+        return instance_schedule
 
-    return instance_schedule
+    except Exception as e:
+        print("An error occurred while retrieving the scheduling:", str(e))
+        conn.rollback()
+
+    finally:
+        cursor.close()
 
 
 def create_scheduling(instance_id, shutdown_hour):
@@ -60,10 +67,17 @@ def create_scheduling(instance_id, shutdown_hour):
 
             print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_hour))
 
+        # Log the scheduling creation
+        log_timestamp = datetime.now()
+        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
+        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
+        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
+
         conn.commit()
 
-    except Exception:
-        print("An error occurred while creating the scheduling.")
+    except Exception as e:
+        print("An error occurred while creating the scheduling:", str(e))
+        conn.rollback()
 
     finally:
         cursor.close()
@@ -85,13 +99,25 @@ def delete_scheduling(instance_id):
         else:
             print("Instance {} was not found in the scheduling".format(instance_id))
 
+        # Log the scheduling deletion
+        log_timestamp = datetime.now()
+        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
+        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
+        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
+
         conn.commit()
 
-    except Exception:
-        print("An error occurred while deleting the scheduling.")
+    except Exception as e:
+        print("An error occurred while deleting the scheduling:", str(e))
+        conn.rollback()
 
     finally:
         cursor.close()
+
+
+# Rollback the current transaction explicitly
+def rollback_transaction():
+    conn.rollback()
 
 
 # Close the connection when it's no longer needed
