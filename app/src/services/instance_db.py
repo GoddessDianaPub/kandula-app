@@ -86,7 +86,7 @@ def get_scheduling():
             }
         ]
     }
-    return json.dumps(instance_schedule)
+    return instance_schedule
 
 
 def create_scheduling(os_type, shutdown_hour):
