@@ -34,12 +34,13 @@ def get_scheduling():
 
         # Prepare the result in JSON format
         instance_schedule = []
-        for row in rows:
-            instance_id, scheduled_hours = row
-            instance_schedule.append({
-                "instance_id": instance_id,
-                "scheduled_hours": scheduled_hours
-            })
+        if rows:
+            for row in rows:
+                instance_id, scheduled_hours = row
+                instance_schedule.append({
+                    "instance_id": instance_id,
+                    "scheduled_hours": scheduled_hours
+                })
 
         return instance_schedule
 
@@ -49,6 +50,7 @@ def get_scheduling():
     finally:
         if cursor:
             cursor.close()
+
 
 
 def create_scheduling(instance_id, shutdown_hour):
