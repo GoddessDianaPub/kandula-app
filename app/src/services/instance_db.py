@@ -1,4 +1,5 @@
 import json
+import boto3
 import psycopg2
 
 schema = "kandula"
@@ -73,19 +74,40 @@ def leave(con):
 
 
 def get_scheduling():
-    # TODO: Retrieve instance schedule data from the database
+    ec2_client = boto3.client('ec2')
+
+    def get_instances_by_tag(tag_key, tag_value):
+        response = ec2_client.describe_instances(
+            Filters=[
+                {
+                    'Name': f'tag:{tag_key}',
+                    'Values': [tag_value]
+                }
+            ]
+        )
+        instances = response['Reservations']
+        return instances
+    
     instance_schedule = {
-        "Instances": [
-            {
-                "Stop": "22:00",
-                "DailyShutdownHour": 22
-            },
-            {
-                "Stop": "23:00",
-                "DailyShutdownHour": 23
-            }
-        ]
+        "Instances": []
     }
+
+    instances_22 = get_instances_by_tag('Stop', '22:00')
+    for instance in instances_22:
+        instance_schedule['Instances'].append({
+            "InstanceId": instance['Instances'][0]['InstanceId'],
+            "Stop": "22:00",
+            "DailyShutdownHour": 22
+        })
+
+    instances_23 = get_instances_by_tag('Stop', '23:00')
+    for instance in instances_23:
+        instance_schedule['Instances'].append({
+            "InstanceId": instance['Instances'][0]['InstanceId'],
+            "Stop": "23:00",
+            "DailyShutdownHour": 23
+        })
+
     return instance_schedule
 
 
