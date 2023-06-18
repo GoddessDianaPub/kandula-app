@@ -11,6 +11,23 @@ con = psycopg2.connect(
     password="Aa123456!"
 )
 
+def check_postgresql_connection():
+    try:
+        con = psycopg2.connect(
+            host="rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com",
+            port=5432,
+            database="kandula",
+            user="kandula",
+            password="Aa123456!"
+        )
+        con.close()
+        print("PostgreSQL connection successful!")
+    except psycopg2.Error as e:
+        print("Unable to connect to PostgreSQL:", e)
+
+# Call the function to check the connection
+check_postgresql_connection()
+
 
 def insert_data(con):
     try:
