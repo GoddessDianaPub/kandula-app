@@ -1,5 +1,4 @@
 import json
-import boto3
 import psycopg2
 
 schema = "kandula"
@@ -73,42 +72,32 @@ def leave(con):
     con.close()
 
 
-def get_scheduling():
-    ec2_client = boto3.client('ec2')
+def get_scheduling(con):
+    try:
+        cur = con.cursor()
+        cur.execute(f"SELECT instance_id, shutdown_time FROM your_table_name")
+        rows = cur.fetchall()
+        cur.close()
 
-    def get_instances_by_tag(tag_key, tag_value):
-        response = ec2_client.describe_instances(
-            Filters=[
-                {
-                    'Name': f'tag:{tag_key}',
-                    'Values': [tag_value]
-                }
-            ]
-        )
-        instances = response['Reservations']
-        return instances
-    
-    instance_schedule = {
-        "Instances": []
-    }
+        instance_schedule = {
+            "Instances": []
+        }
 
-    instances_22 = get_instances_by_tag('Stop', '22:00')
-    for instance in instances_22:
-        instance_schedule['Instances'].append({
-            "InstanceId": instance['Instances'][0]['InstanceId'],
-            "Stop": "22:00",
-            "DailyShutdownHour": 22
-        })
+        for row in rows:
+            instance_id = row[0]
+            shutdown_time = row[1]
+            
+            instance_schedule["Instances"].append({
+                "InstanceId": instance_id,
+                "Stop": shutdown_time,
+                "DailyShutdownHour": int(shutdown_time.split(":")[0])
+            })
 
-    instances_23 = get_instances_by_tag('Stop', '23:00')
-    for instance in instances_23:
-        instance_schedule['Instances'].append({
-            "InstanceId": instance['Instances'][0]['InstanceId'],
-            "Stop": "23:00",
-            "DailyShutdownHour": 23
-        })
+        return instance_schedule
 
-    return instance_schedule
+    except Exception as error:
+        print("ERROR:", error)
+
 
 
 def create_scheduling(os_type, shutdown_hour):
