@@ -73,9 +73,19 @@ def leave(con):
 
 
 def get_scheduling():
-    instance_schedule = {"Instances": []}
-    # TODO: Implement a DB select query that gets all instance ids, OSTypes, and their scheduled hours
-    # The returned data would be in JSON format as shown in the sample output below
+    # TODO: Retrieve instance schedule data from the database
+    instance_schedule = {
+        "Instances": [
+            {
+                "Stop": "22:00",
+                "DailyShutdownHour": 22
+            },
+            {
+                "Stop": "23:00",
+                "DailyShutdownHour": 23
+            }
+        ]
+    }
     return json.dumps(instance_schedule)
 
 
