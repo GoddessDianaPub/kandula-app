@@ -100,6 +100,7 @@ def get_scheduling(con):
 
 
 
+
 def create_scheduling(os_type, shutdown_hour):
     instance_schedule = json.loads(get_scheduling())
     try:  # Update
