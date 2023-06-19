@@ -1,7 +1,6 @@
 import psycopg2
-from datetime import datetime
+import json
 
-# Variables
 host = "rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com"
 port = 5432
 schema = "kandula"
@@ -19,6 +18,7 @@ conn = psycopg2.connect(
     password=password
 )
 
+# Rest of your code...
 
 def get_scheduling():
     instance_schedule = []
@@ -50,8 +50,6 @@ scheduling_data = get_scheduling()
 json_data = json.dumps(scheduling_data)
 
 print(json_data)
-
-
 
 def create_scheduling(instance_id, shutdown_time):
     try:
@@ -86,45 +84,3 @@ def create_scheduling(instance_id, shutdown_time):
     finally:
         if cursor:
             cursor.close()
-
-
-def delete_scheduling(instance_id):
-    try:
-        cursor = conn.cursor()
-        query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
-        cursor.execute(query, (instance_id,))
-        existing_instance = cursor.fetchone()
-
-        if existing_instance:
-            delete_query = "DELETE FROM {} WHERE instance_id = %s".format(scheduler_table)
-            cursor.execute(delete_query, (instance_id,))
-
-            print("Instance {} was removed from scheduling".format(instance_id))
-        else:
-            print("Instance {} was not found in the scheduling".format(instance_id))
-
-        # Log the scheduling deletion
-        log_timestamp = datetime.now()
-        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
-        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
-        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
-
-        conn.commit()
-
-    except Exception as e:
-        print("An error occurred while deleting the scheduling:", str(e))
-        conn.rollback()
-
-    finally:
-        if cursor:
-            cursor.close()
-
-
-# Rollback the current transaction explicitly
-def rollback_transaction():
-    conn.rollback()
-
-
-# Close the connection when it's no longer needed
-def close_connection():
-    conn.close()
