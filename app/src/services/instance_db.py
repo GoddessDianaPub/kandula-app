@@ -1,6 +1,6 @@
 import json
 import psycopg2
-from datetime import datetime
+import datetime
 
 # Variables
 host = "rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com"
@@ -34,7 +34,7 @@ def get_scheduling():
                 instance_id, shutdown_time = row
                 instance_schedule.append({
                     "instance_id": instance_id,
-                    "shutdown_time": str(shutdown_time)  # Convert time to string
+                    "shutdown_time": str(shutdown_time)
                 })
 
     except Exception as e:
@@ -57,26 +57,33 @@ print(json_data)
 def create_scheduling(instance_id, shutdown_time):
     try:
         cursor = conn.cursor()
-        query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
+
+        # Check if shutdown_time is already in the expected format
+        if not isinstance(shutdown_time, str):
+            print("Invalid shutdown time format for instance {}. Please check the time format.".format(instance_id))
+            return
+
+        query = "SELECT instance_id, shutdown_time FROM {} WHERE instance_id = %s".format(scheduler_table)
         cursor.execute(query, (instance_id,))
         existing_instance = cursor.fetchone()
 
         if existing_instance:
-            update_query = "UPDATE {} SET scheduled_hours = %s WHERE instance_id = %s".format(scheduler_table)
-            cursor.execute(update_query, (shutdown_time, instance_id))
-
-            print("Instance {} will be shutdown was updated to the hour {}".format(instance_id, shutdown_time))
+            existing_shutdown_time = existing_instance[1]
+            if existing_shutdown_time is None:
+                print("Instance {} already has a shutdown time set as null.".format(instance_id))
+            else:
+                update_query = "UPDATE {} SET shutdown_time = %s WHERE instance_id = %s".format(scheduler_table)
+                cursor.execute(update_query, (shutdown_time, instance_id))
+                print("Instance {} shutdown time was updated to {}".format(instance_id, shutdown_time))
         else:
-            insert_query = "INSERT INTO {} (instance_id, scheduled_hours) VALUES (%s, %s)".format(scheduler_table)
+            insert_query = "INSERT INTO {} (instance_id, shutdown_time) VALUES (%s, %s)".format(scheduler_table)
             cursor.execute(insert_query, (instance_id, shutdown_time))
+            print("Instance {} will be scheduled for shutdown every day at {}".format(instance_id, shutdown_time))
 
-            print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_time))
-
-        # Log the scheduling creation
-        log_timestamp = datetime.now()
-        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
-        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
-        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
+        # Insert log entry
+        log_timestamp = datetime.datetime.now()
+        log_query = "INSERT INTO {} (instance_id, log_timestamp) VALUES (%s, %s)".format(log_table)
+        cursor.execute(log_query, (instance_id, log_timestamp))
 
         conn.commit()
 
