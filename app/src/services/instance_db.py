@@ -26,7 +26,6 @@ def get_instance_name(instance_id):
 
 
 def get_scheduling():
-    cursor = None
     try:
         cursor = conn.cursor()
         query = "SELECT instance_id, scheduled_hours FROM {}".format(scheduler_table)
@@ -55,21 +54,77 @@ def get_scheduling():
 
 
 def create_scheduling(instance_id, shutdown_hour):
-    # TODO: Implement a DB insert that creates the instance ID and the chosen hour in DB
-    try:  # update
-        index = [i['Id'] for i in instance_schedule["Instances"]].index(instance_id)
-        instance_schedule["Instances"][index] = {"Id": instance_id, "DailyShutdownHour": int(shutdown_hour[0:2])}
-        print("Instance {} will be shutdown was updated to the hour {}".format(instance_id, shutdown_hour))
-    except Exception:  # insert
-        instance_schedule["Instances"].append({"Id": instance_id, "DailyShutdownHour": int(shutdown_hour[0:2])})
-        print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_hour))
+    try:
+        cursor = conn.cursor()
+        query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
+        cursor.execute(query, (instance_id,))
+        existing_instance = cursor.fetchone()
+
+        if existing_instance:
+            update_query = "UPDATE {} SET scheduled_hours = %s WHERE instance_id = %s".format(scheduler_table)
+            cursor.execute(update_query, (shutdown_hour, instance_id))
+
+            print("Instance {} will be shutdown was updated to the hour {}".format(instance_id, shutdown_hour))
+        else:
+            insert_query = "INSERT INTO {} (instance_id, scheduled_hours) VALUES (%s, %s)".format(scheduler_table)
+            cursor.execute(insert_query, (instance_id, shutdown_hour))
+
+            print("Instance {} will be shutdown every day when the hour is {}".format(instance_id, shutdown_hour))
+
+        # Log the scheduling creation
+        log_timestamp = datetime.now()
+        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
+        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
+        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
+
+        conn.commit()
+
+    except Exception as e:
+        print("An error occurred while creating the scheduling:", str(e))
+        conn.rollback()
+
+    finally:
+        if cursor:
+            cursor.close()
 
 
 def delete_scheduling(instance_id):
-    # TODO: Implement a delete query to remove the instance ID from scheduling
     try:
-        index = [k['Id'] for k in instance_schedule["Instances"]].index(instance_id)
-        instance_schedule["Instances"].pop(index)
-        print("Instance {} was removed from scheduling".format(instance_id))
-    except Exception:
-        print("Instance {} was not there to begin with".format(instance_id))
+        cursor = conn.cursor()
+        query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
+        cursor.execute(query, (instance_id,))
+        existing_instance = cursor.fetchone()
+
+        if existing_instance:
+            delete_query = "DELETE FROM {} WHERE instance_id = %s".format(scheduler_table)
+            cursor.execute(delete_query, (instance_id,))
+
+            print("Instance {} was removed from scheduling".format(instance_id))
+        else:
+            print("Instance {} was not found in the scheduling".format(instance_id))
+
+        # Log the scheduling deletion
+        log_timestamp = datetime.now()
+        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
+        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
+        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
+
+        conn.commit()
+
+    except Exception as e:
+        print("An error occurred while deleting the scheduling:", str(e))
+        conn.rollback()
+
+    finally:
+        if cursor:
+            cursor.close()
+
+
+# Rollback the current transaction explicitly
+def rollback_transaction():
+    conn.rollback()
+
+
+# Close the connection when it's no longer needed
+def close_connection():
+    conn.close()
