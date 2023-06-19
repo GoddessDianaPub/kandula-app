@@ -1,4 +1,3 @@
-from flask import Flask, render_template
 import psycopg2
 import json
 import datetime
@@ -48,7 +47,11 @@ def get_scheduling():
 
     return instance_schedule
 
+scheduling_data = get_scheduling()
 
+json_data = json.dumps(scheduling_data)
+
+print(json_data)
 
 
 def create_scheduling(instance_id, shutdown_time):
