@@ -1,4 +1,3 @@
-from flask import Flask, render_template
 import json
 import psycopg2
 import datetime
@@ -137,32 +136,3 @@ def rollback_transaction():
 # Close the connection when it's no longer needed
 def close_connection():
     conn.close()
-
-
-@app.route('/')
-def scheduler():
-    # Retrieve scheduling data
-    scheduling_data = get_scheduling()
-
-    # Convert scheduling data to JSON
-    json_data = json.dumps(scheduling_data)
-
-    # Print or use the JSON data as needed
-    print(json_data)
-
-    # Render the template and pass the scheduling data to the template
-    return render_template('scheduler.html', title='Scheduling', scheduling_data=scheduling_data)
-
-
-if __name__ == '__main__':
-    # Retrieve scheduling data
-    scheduling_data = get_scheduling()
-
-    # Iterate over scheduling data and create/update scheduling
-    for data in scheduling_data:
-        instance_id = data["instance_id"]
-        shutdown_time = data["shutdown_time"]
-
-        # Skip empty shutdown_time values
-        if shutdown_time is not None:
-            create_scheduling(instance_id, shutdown_time)
