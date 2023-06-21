@@ -32,7 +32,7 @@ pipeline {
         REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
         REPO_DIR              = "kandula-app-k8s"
         PYTHON_APP_IMAGE      = "python:3.9-slim"
-        CLUSTER_NAME          = "opsschool-eks-qx0PmZ7r"
+        CLUSTER_NAME          = "opsschool-eks-0YbcApGx"
     }
     
     stages {
