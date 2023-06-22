@@ -37,6 +37,25 @@ pipeline {
                 git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
             }
         }
+		
+		stage('Install PostgreSQL') {
+			steps {
+				script {
+					def postgresqlInstalled = sh(
+						script: 'dpkg -s postgresql',
+						returnStatus: true
+					)
+					
+					if (postgresqlInstalled == 0) {
+						echo "PostgreSQL is already installed"
+					} else {
+						sh 'sudo apt-get update'
+						sh 'sudo apt-get install postgresql -y'
+					}
+				}
+			}
+		}
+
         
         stage('Create Database') {
             steps {
@@ -56,6 +75,7 @@ pipeline {
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);'"
             }
         }
+			
 		
 		stage('Create log table') {
             steps {
