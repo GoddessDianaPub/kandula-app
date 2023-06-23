@@ -66,6 +66,18 @@ pipeline {
             }
         }
 		
+        stage('Install Trivy') {
+            steps {
+                script {
+                    def trivyInstalled = sh(returnStatus: true, script: 'command -v trivy').status == 0
+
+                    if (!trivyInstalled) {
+                        sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin'
+                    }
+                }
+            }
+        }
+		
 		stage('Trivy Scan') {
 			steps {
 				sh "trivy --no-progress --exit-code 1 --severity MEDIUM,HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}"
