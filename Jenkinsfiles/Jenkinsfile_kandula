@@ -57,23 +57,22 @@ pipeline {
 //              }
 //         }
 
-			stage('Vulnerability Scanning') {
+			stage('Check Vulnerability Severity') {
 				steps {
 					script {
-						// Run vulnerability scanning command
+						// Run vulnerability scanning command during build
 						def vulnerabilities = sh(
-							script: 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$(pwd):/workdir" aquasec/trivy image --severity HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}',
+							script: "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v '${WORKSPACE}:/workdir' aquasec/trivy image --severity HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}",
 							returnStdout: true
 						).trim()
 
 						// Check the vulnerabilities for HIGH or CRITICAL severity
 						if (vulnerabilities.contains('HIGH') || vulnerabilities.contains('CRITICAL')) {
-							error('High or critical vulnerabilities found. Aborting the build.')
+							error('High or critical vulnerabilities found during build. Aborting the job.')
 						}
 					}
 				}
 			}
-
          
         // Building Docker images
         stage ('Building latest image') {
