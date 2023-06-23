@@ -55,13 +55,14 @@ pipeline {
         
         stage('Create Database') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE DATABASE ${KANDULA_NAME} IF NOT EXISTS;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE DATABASE IF NOT EXISTS ${KANDULA_NAME};' -W"
             }
         }
+		
         
         stage('Create Schema') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME} IF NOT EXISTS;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};' -W"
                 sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public IF NOT EXISTS;' -W"
             }
         }
