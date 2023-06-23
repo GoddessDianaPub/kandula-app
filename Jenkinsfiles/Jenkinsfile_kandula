@@ -85,7 +85,7 @@ pipeline {
             steps {
                 script {
                     def exitCode = sh(
-                        script: "trivy image --timeout 5m --exit-code=0 --severity CRITICAL,HIGH '${dockerImage.id}'",
+                        script: "trivy image --timeout 5m --exit-code=0 --severity CRITICAL,HIGH '${REPOSITORY_URI}:${env.BUILD_ID}'",
                         returnStatus: true
                     )
                     echo "Trivy scan for High and Critical Severity exited with code ${exitCode}"
