@@ -81,19 +81,9 @@ pipeline {
         }
 
 		
-         stage('Trivy Scan') {
+        stage('Scan image with Trivy') {
             steps {
-                script {
-                    def exitCode = sh(
-                        script: "trivy image --timeout 5m --exit-code=0 --severity CRITICAL,HIGH '${REPOSITORY_URI}:${env.BUILD_ID}'",
-                        returnStatus: true
-                    )
-                    echo "Trivy scan for High and Critical Severity exited with code ${exitCode}"
-                    
-                    if (exitCode != 0) {
-                        error('High or Critical severity vulnerabilities found. Failing the job.')
-                    }
-                }
+                sh 'docker run --rm aquasec/trivy trivy image --severity HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}'
             }
         }
 
