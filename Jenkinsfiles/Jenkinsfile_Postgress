@@ -31,12 +31,12 @@ pipeline {
         DATABASE_PASSWORD = "Aa123456!"
     }
     
-    stages {
-        stage('Cloning Git') {
-            steps {
-                git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
-            }
-        }
+	stages {
+		stage('Cloning Git') {
+			steps {
+				git url: "${REPO_URL}", branch: 'main', credentialsId: 'Github_token'
+			}
+		}
 		
 		stage('Install PostgreSQL') {
 			steps {
@@ -55,6 +55,8 @@ pipeline {
 				}
 			}
 		}
+	}
+
         
         stage('Create Database') {
             steps {
