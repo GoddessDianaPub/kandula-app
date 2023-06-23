@@ -56,8 +56,8 @@ pipeline {
 		stage('Create Database') {
 			steps {
 				sh """
-					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "SELECT 1 FROM pg_database WHERE datname='${KANDULA_NAME}'" | grep -q 1 ||
-					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "CREATE DATABASE ${KANDULA_NAME}"
+					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "SELECT 1 FROM pg_database WHERE datname='${KANDULA_NAME}';" -W | grep -q 1 ||
+					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "CREATE DATABASE ${KANDULA_NAME};" -W
 				"""
 			}
 		}
@@ -67,10 +67,10 @@ pipeline {
 		stage('Create Schema') {
 			steps {
 				sh """
-					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "SELECT 1 FROM pg_namespace WHERE nspname='${KANDULA_NAME}'" | grep -q 1 ||
-					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE SCHEMA ${KANDULA_NAME}"
+					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "SELECT 1 FROM pg_namespace WHERE nspname='${KANDULA_NAME}';" -W | grep -q 1 ||
+					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE SCHEMA ${KANDULA_NAME};" -W
 				"""
-				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public'"
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public';" -W
 					}
 				}
 
@@ -80,7 +80,7 @@ pipeline {
 				script {
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE IF NOT EXISTS ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);'
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE TABLE IF NOT EXISTS ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);" -W
 						"""
 					} catch (Exception e) {
 						echo "Table ${KANDULA_NAME}.instances_scheduler already exists."
@@ -95,7 +95,7 @@ pipeline {
 				script {
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id));'
+							echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id));" -W
 						"""
 					} catch (Exception e) {
 						echo "Table ${KANDULA_NAME}.instances_shutdown_log already exists."
@@ -110,14 +110,14 @@ pipeline {
 				script {
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE ROLE readwrite;'
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "CREATE ROLE readwrite;" -W
 						"""
 					} catch (Exception e) {
 						echo "Role 'readwrite' already exists."
 					}
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "CREATE USER ${KANDULA_NAME} WITH PASSWORD '${DATABASE_USER}';"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "CREATE USER ${KANDULA_NAME} WITH PASSWORD '${DATABASE_PASSWORD}';" -W
 						"""
 					} catch (Exception e) {
 						echo "User '${KANDULA_NAME}' already exists."
