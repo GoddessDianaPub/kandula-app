@@ -83,7 +83,7 @@ pipeline {
 		
         stage('Scan image with Trivy') {
             steps {
-                sh "docker run --rm aquasec/trivy trivy image --severity HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}"
+                sh "trivy image ${REPOSITORY_URI}:${env.BUILD_ID}"
             }
         }
 
