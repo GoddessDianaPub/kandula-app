@@ -54,59 +54,74 @@ pipeline {
         
         stage('Create Database') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'database_password', 
-                    passwordVariable: 'DB_PASSWORD')
-                ]) {
-                    sh "psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE DATABASE ${KANDULA_NAME};'"
+                script {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'database_password', passwordVariable: 'DB_PASSWORD')
+                    ]) {
+                        sh """
+                            psql -h \${HOST} -p \${PORT} -d postgres -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'CREATE DATABASE \${KANDULA_NAME};'
+                        """
+                    }
                 }
             }
         }
         
         stage('Create Schema') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'database_password', 
-                    passwordVariable: 'DB_PASSWORD')
-                ]) {
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};'"
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public;'"
+                script {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'database_password', passwordVariable: 'DB_PASSWORD')
+                    ]) {
+                        sh """
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'CREATE SCHEMA IF NOT EXISTS \${KANDULA_NAME};'
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'GRANT ALL PRIVILEGES ON SCHEMA \${KANDULA_NAME} TO public;'
+                        """
+                    }
                 }
             }
         }
         
         stage('Create shutdown table') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'database_password', 
-                    passwordVariable: 'DB_PASSWORD')
-                ]) {
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE TABLE ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);'"
+                script {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'database_password', passwordVariable: 'DB_PASSWORD')
+                    ]) {
+                        sh """
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'CREATE TABLE \${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);'
+                        """
+                    }
                 }
-            }   
-        }       
+            }
+        }
                 
         stage('Create log table') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'database_password', 
-                    passwordVariable: 'DB_PASSWORD')
-                ]) {
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id));'"
+                script {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'database_password', passwordVariable: 'DB_PASSWORD')
+                    ]) {
+                        sh """
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'CREATE TABLE \${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES \${KANDULA_NAME}.instances_scheduler(instance_id));'
+                        """
+                    }
                 }
             }
         }
         
         stage('Setup User and Permissions') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'database_password', 
-                    passwordVariable: 'DB_PASSWORD')
-                ]) {
-                    sh "psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE ROLE readwrite;'"
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT CONNECT ON DATABASE ${KANDULA_NAME} TO readwrite;'"
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT USAGE ON SCHEMA ${KANDULA_NAME} TO readwrite;'"
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite;'"
+                script {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'database_password', passwordVariable: 'DB_PASSWORD')
+                    ]) {
+                        sh """
+                            psql -h \${HOST} -p \${PORT} -d postgres -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'CREATE ROLE readwrite;'
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'GRANT CONNECT ON DATABASE \${KANDULA_NAME} TO readwrite;'
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'GRANT USAGE ON SCHEMA \${KANDULA_NAME} TO readwrite;'
+                            psql -h \${HOST} -p \${PORT} -d \${KANDULA_NAME} -U \${DATABASE_USER} -W '\${DB_PASSWORD}' -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA \${KANDULA_NAME} TO readwrite;'
+                        """
+                    }
                 }
             }
         }
