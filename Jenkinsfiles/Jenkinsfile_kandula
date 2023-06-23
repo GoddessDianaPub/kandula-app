@@ -69,14 +69,18 @@ pipeline {
         stage('Install Trivy') {
             steps {
                 script {
-                    def trivyInstalled = sh(returnStatus: true, script: 'command -v trivy').status == 0
+                    def trivyInstalled = tool 'trivy'
 
                     if (!trivyInstalled) {
-                        sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin'
+                        tool name: 'trivy', type: 'org.jenkinsci.plugins.toolenv.ToolEnvBuildWrapper$DescriptorImpl$ToolEnv', properties: [
+                            $class: 'org.jenkinsci.plugins.toolenv.toolenvproperties.ToolEnvProperty',
+                            toolName: 'trivy'
+                        ]
                     }
                 }
             }
         }
+
 		
 		stage('Trivy Scan') {
 			steps {
