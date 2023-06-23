@@ -69,7 +69,7 @@ pipeline {
         stage('Install Trivy') {
             steps {
                 script {
-                    def trivyInstalled = sh(returnStatus: true, script: 'which trivy').status == 0
+                    def trivyInstalled = fileExists('/usr/local/bin/trivy')
 
                     if (!trivyInstalled) {
                         sh 'sudo snap install trivy'
