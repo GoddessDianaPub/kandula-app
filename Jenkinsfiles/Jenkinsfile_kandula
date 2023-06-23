@@ -81,11 +81,17 @@ pipeline {
         }
 
 		
-		stage('Trivy Scan') {
-			steps {
-				sh "trivy --exit-code 1 --severity MEDIUM,HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}"
-			}
-		}
+        stage('Trivy Scan') {
+            steps {
+                script {
+                    sh "trivy --severity MEDIUM,HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}"
+                    def trivyExitCode = sh(returnStatus: true, script: "echo \$?")
+                    if (trivyExitCode != 0) {
+                        error "Trivy scan failed with exit code ${trivyExitCode}"
+                    }
+                }
+            }
+        }
 
       
         stage ('Pushing build No. to ECR') {
