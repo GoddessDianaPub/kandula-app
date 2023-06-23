@@ -71,22 +71,31 @@ pipeline {
 					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE SCHEMA ${KANDULA_NAME}"
 				"""
 				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public'"
+					}
+				}
+
+				
+		stage('Create shutdown table') {
+			steps {
+				script {
+					try {
+						sh """
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE IF NOT EXISTS ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);'
+						"""
+					} catch (Exception e) {
+						echo "Table ${KANDULA_NAME}.instances_scheduler already exists."
+					}
+				}
 			}
 		}
-
-        
-        stage('Create shutdown table') {
-            steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME) IF NOT EXISTS;' -W"
-            }   
-        }       
+   
 	    		
 		stage('Create log table') {
 			steps {
 				script {
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id))'
+							echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id));'
 						"""
 					} catch (Exception e) {
 						echo "Table ${KANDULA_NAME}.instances_shutdown_log already exists."
