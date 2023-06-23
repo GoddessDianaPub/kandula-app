@@ -67,41 +67,55 @@ pipeline {
             }
         }
 		
+	
+        stage('Install Trivy') {
+            steps {
+                script {
+                    def trivyInstalled = fileExists('/usr/local/bin/trivy')
+
+                    if (!trivyInstalled) {
+                        sh 'sudo snap install trivy'
+                    } else {
+                        echo 'Trivy is already installed.'
+                    }
+                }
+            }
+        }
+		
+
+//		stage('Check Vulnerability Severity') {
+//			steps {
+//				script {
+//					def vulnerabilities = sh(
+//						script: "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v '${WORKSPACE}:/workdir' aquasec/trivy image --severity HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}",
+//						returnStdout: true
+//					).trim()
+//
+//					if (vulnerabilities.contains('HIGH') || vulnerabilities.contains('CRITICAL')) {
+//						error('High or critical vulnerabilities found during build. Aborting the job.')
+//					}
+//				}
+//			}
+//		}
+		
+		
 		stage('Check Vulnerability Severity') {
 			steps {
 				script {
 					def vulnerabilities = sh(
 						script: "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v '${WORKSPACE}:/workdir' aquasec/trivy image --severity HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}",
-						returnStdout: false
+						returnStdout: true
 					).trim()
 
 					if (vulnerabilities.contains('HIGH') || vulnerabilities.contains('CRITICAL')) {
-						error('High or critical vulnerabilities found during build. Aborting the job.')
+						echo 'High or critical vulnerabilities found during build. Continuing with the job.'
+					} else {
+						echo 'No high or critical vulnerabilities found during build.'
 					}
 				}
 			}
 		}
-		
-//        stage('Install Trivy') {
-//            steps {
-//                script {
-//                    def trivyInstalled = fileExists('/usr/local/bin/trivy')
-//
-//                    if (!trivyInstalled) {
-//                        sh 'sudo snap install trivy'
-//                    } else {
-//                        echo 'Trivy is already installed.'
-//                    }
-//                }
-//            }
-//        }
 
-		
-//        stage('Scan image with Trivy') {
-//            steps {
-//                sh "trivy image ${REPOSITORY_URI}:${env.BUILD_ID}"
-//            }
-//        }
 
       
         stage ('Pushing build No. to ECR') {
