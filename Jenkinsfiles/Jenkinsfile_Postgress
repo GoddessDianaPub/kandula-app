@@ -71,7 +71,7 @@ pipeline {
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite;'"
             }
         }
-	}
+    }
         
     post {
         always {
