@@ -24,7 +24,7 @@ pipeline {
     
     environment {
         REPO_URL          = "https://github.com/GoddessDianas/kandula-app.git"
-		KANDULA_NAME      = "kandula"
+	KANDULA_NAME      = "kandula"
         HOST              = "rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com"
         PORT              = "5432"
         DATABASE_USER     = "diana"
