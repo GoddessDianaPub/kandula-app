@@ -58,6 +58,7 @@ pipeline {
                     usernamePassword(credentialsId: 'database_password', 
         //            usernameVariable: 'DB_USERNAME',
                     passwordVariable: 'DB_PASSWORD')
+            ]) {
                 sh "psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE DATABASE ${KANDULA_NAME};'"
             }
         }
@@ -67,6 +68,7 @@ pipeline {
                 withCredentials([
                     usernamePassword(credentialsId: 'database_password', 
                     passwordVariable: 'DB_PASSWORD')
+            ]) {
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};' -w <<< '${DATABASE_PASSWORD}'"
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public;'"
             }
@@ -83,6 +85,7 @@ pipeline {
                 withCredentials([
                     usernamePassword(credentialsId: 'database_password', 
                     passwordVariable: 'DB_PASSWORD')
+            ]) {
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id));'"
             }
         }
@@ -92,6 +95,7 @@ pipeline {
                 withCredentials([
                     usernamePassword(credentialsId: 'database_password', 
                     passwordVariable: 'DB_PASSWORD')
+            ]) {
                 sh "psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE ROLE readwrite;'"
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT CONNECT ON DATABASE ${KANDULA_NAME} TO readwrite;'"
                 sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT USAGE ON SCHEMA ${KANDULA_NAME} TO readwrite;'"
