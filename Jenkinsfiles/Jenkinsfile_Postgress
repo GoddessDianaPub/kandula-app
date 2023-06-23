@@ -80,20 +80,20 @@ pipeline {
         
         stage('Setup User and Role') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE ROLE readwrite;' -W"
-				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE USER kandula WITH PASSWORD 'Aa123456!';' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE ROLE readwrite IF NOT EXISTS;' -W"
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE USER ${KANDULA_NAME} WITH PASSWORD '${DATABASE_USER}' IF NOT EXISTS;' -W"
             }
         }
-		
+		CREATE SCHEMA IF NOT EXISTS kandula;
         stage('Grant Permissions') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT CONNECT ON DATABASE ${KANDULA_NAME} TO readwrite;' -W"
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT USAGE ON SCHEMA ${KANDULA_NAME} TO readwrite;' -W"
-				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE kandula.instances_scheduler TO readwrite;' -W"
-				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA kandula TO readwrite;' -W"
-				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'GRANT readwrite TO kandula;' -W"
-				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA kandula GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO readwrite;' -W"
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT CONNECT ON DATABASE ${KANDULA_NAME} IF NOT EXISTS TO readwrite IF NOT EXISTS;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT USAGE ON SCHEMA ${KANDULA_NAME} TO readwrite IF NOT EXISTS;' -W"
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE ${KANDULA_NAME}.instances_scheduler TO readwrite IF NOT EXISTS;' -W"
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA ${KANDULA_NAME} TO readwrite IF NOT EXISTS;' -W"
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'GRANT readwrite TO ${KANDULA_NAME} IF NOT EXISTS;' -W"
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA ${KANDULA_NAME} GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO readwrite IF NOT EXISTS;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite IF NOT EXISTS;' -W"
             }
         }
 
