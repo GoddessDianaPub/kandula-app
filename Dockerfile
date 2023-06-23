@@ -1,5 +1,5 @@
 FROM python:3.9-slim 
-#as build
+#FROM python:3.9-slim as build
 
 RUN mkdir /kandula
 WORKDIR /kandula
