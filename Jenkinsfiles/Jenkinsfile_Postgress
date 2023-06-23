@@ -69,7 +69,7 @@ pipeline {
                     usernamePassword(credentialsId: 'database_password', 
                     passwordVariable: 'DB_PASSWORD')
                 ]) {
-                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};' -w <<< '${DATABASE_PASSWORD}'"
+                    sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};'"
                     sh "psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -W '${DB_PASSWORD}' -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public;'"
                 }
             }
