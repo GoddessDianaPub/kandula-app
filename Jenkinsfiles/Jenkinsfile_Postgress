@@ -55,26 +55,26 @@ pipeline {
         
         stage('Create Database') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE DATABASE kandula;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE DATABASE ${KANDULA_NAME} IF NOT EXISTS;' -W"
             }
         }
         
         stage('Create Schema') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};' -W"
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME} IF NOT EXISTS;' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public IF NOT EXISTS;' -W"
             }
         }
         
         stage('Create shutdown table') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME);' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_scheduler (instance_id VARCHAR(255) PRIMARY KEY, shutdown_time TIME) IF NOT EXISTS;' -W"
             }   
         }       
 	    		
 	stage('Create log table') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id));' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id)) IF NOT EXISTS;' -W"
             }
         }
         
