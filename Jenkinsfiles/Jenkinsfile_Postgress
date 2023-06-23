@@ -84,7 +84,7 @@ pipeline {
 				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE USER ${KANDULA_NAME} WITH PASSWORD '${DATABASE_USER}' IF NOT EXISTS;' -W"
             }
         }
-		CREATE SCHEMA IF NOT EXISTS kandula;
+
         stage('Grant Permissions') {
             steps {
                 sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT CONNECT ON DATABASE ${KANDULA_NAME} IF NOT EXISTS TO readwrite IF NOT EXISTS;' -W"
