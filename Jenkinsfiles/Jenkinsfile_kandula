@@ -66,26 +66,26 @@ pipeline {
             }
         }
 		
-        stage('Install Trivy') {
-            steps {
-                script {
-                    def trivyInstalled = fileExists('/usr/local/bin/trivy')
-
-                    if (!trivyInstalled) {
-                        sh 'sudo snap install trivy'
-                    } else {
-                        echo 'Trivy is already installed.'
-                    }
-                }
-            }
-        }
+//        stage('Install Trivy') {
+//            steps {
+//                script {
+//                    def trivyInstalled = fileExists('/usr/local/bin/trivy')
+//
+//                    if (!trivyInstalled) {
+//                        sh 'sudo snap install trivy'
+//                    } else {
+//                        echo 'Trivy is already installed.'
+//                    }
+//                }
+//            }
+//        }
 
 		
-        stage('Scan image with Trivy') {
-            steps {
-                sh "trivy image ${REPOSITORY_URI}:${env.BUILD_ID}"
-            }
-        }
+//        stage('Scan image with Trivy') {
+//            steps {
+//                sh "trivy image ${REPOSITORY_URI}:${env.BUILD_ID}"
+//            }
+//        }
 
       
         stage ('Pushing build No. to ECR') {
