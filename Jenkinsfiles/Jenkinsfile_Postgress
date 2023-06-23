@@ -55,7 +55,8 @@ pipeline {
         
         stage('Create Database') {
             steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'CREATE DATABASE IF NOT EXISTS ${KANDULA_NAME};' -W"
+                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c 'DO $$ BEGIN CREATE DATABASE ${KANDULA_NAME}; EXCEPTION WHEN duplicate_database THEN END $$;' -W"
+;' -W"
             }
         }
 		
