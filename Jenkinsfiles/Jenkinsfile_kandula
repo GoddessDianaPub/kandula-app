@@ -65,6 +65,12 @@ pipeline {
                 }
             }
         }
+		
+		stage('Trivy Scan') {
+		  steps {
+			sh 'trivy --no-progress --exit-code 1 --severity MEDIUM,HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}'
+		  }
+		}
       
         stage ('Pushing build No. to ECR') {
             steps {
@@ -75,11 +81,6 @@ pipeline {
             }
         }
 		
-		stage('Trivy Scan') {
-		  steps {
-			sh 'trivy --no-progress --exit-code 1 --severity MEDIUM,HIGH,CRITICAL darinpope/java-web-app:latest'
-		  }
-		}
         
 //         stage ("Login to EKS") {
 //              steps {
