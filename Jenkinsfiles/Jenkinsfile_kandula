@@ -69,11 +69,10 @@ pipeline {
         stage('Install Trivy') {
             steps {
                 script {
-                    def trivyInstalled = sh(returnStatus: true, script: 'command -v trivy').status == 0
+                    def trivyInstalled = sh(returnStatus: true, script: 'which trivy').status == 0
 
                     if (!trivyInstalled) {
-                        sh 'apt-get update'
-                        sh 'apt-get install -y trivy'
+                        sh 'sudo snap install trivy'
                     } else {
                         echo 'Trivy is already installed.'
                     }
