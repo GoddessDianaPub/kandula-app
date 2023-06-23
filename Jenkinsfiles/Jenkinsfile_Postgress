@@ -38,20 +38,20 @@ pipeline {
             }
         }
 
-	stage('Install PostgreSQL') {
-	    steps {
-	        script {
-	            def postgresqlInstalled = sh(script: 'dpkg -s postgresql', returnStatus: true)
-	
-	            if (postgresqlInstalled == 0) {
-	                echo "PostgreSQL is already installed"
-	            } else {
-	                sh 'sudo apt-get update'
-	                sh 'sudo apt-get install postgresql -y'
-	            }
-	        }
-	    }
-	}
+		stage('Install PostgreSQL') {
+			steps {
+				script {
+					def postgresqlInstalled = sh(script: 'dpkg -s postgresql', returnStatus: true)
+		
+					if (postgresqlInstalled == 0) {
+						echo "PostgreSQL is already installed"
+					} else {
+						sh 'sudo apt-get update'
+						sh 'sudo apt-get install postgresql -y'
+					}
+				}
+			}
+		}
         
 		stage('Create Database') {
 			steps {
@@ -81,11 +81,20 @@ pipeline {
             }   
         }       
 	    		
-	stage('Create log table') {
-            steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id)) IF NOT EXISTS;' -W"
-            }
-        }
+		stage('Create log table') {
+			steps {
+				script {
+					try {
+						sh """
+							echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE TABLE ${KANDULA_NAME}.instances_shutdown_log (log_id SERIAL PRIMARY KEY, instance_id VARCHAR(255), log_timestamp TIMESTAMP, FOREIGN KEY (instance_id) REFERENCES ${KANDULA_NAME}.instances_scheduler(instance_id))'
+						"""
+					} catch (Exception e) {
+						echo "Table ${KANDULA_NAME}.instances_shutdown_log already exists."
+					}
+				}
+			}
+		}
+
         
         stage('Setup User and Role') {
             steps {
