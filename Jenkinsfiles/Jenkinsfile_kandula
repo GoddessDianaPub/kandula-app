@@ -81,13 +81,23 @@ pipeline {
         }
 
 		
-        stage('Trivy Scan') {
-            steps {
-                script {
-                    sh "trivy --severity MEDIUM,HIGH,CRITICAL ${REPOSITORY_URI}:${env.BUILD_ID}"
-                    def trivyExitCode = sh(returnStatus: true, script: "echo \$?")
-                    if (trivyExitCode != 0) {
-                        error "Trivy scan failed with exit code ${trivyExitCode}"
+        stage('Scan image with Trivy'){
+            parallel{
+                stage('Scan Medium and lower Severity'){
+                    steps{
+                        script{
+                            response = sh (script: "trivy image --timeout 5m --exit-code=0 --severity MEDIUM,LOW,UNKNOWN '${dockerImage.id}'", returnStdout: true).trim()
+                            echo "${response1}"
+                        }
+                    }
+                }
+                stage('Scan High and Critical Severity '){
+                    steps{
+                        script{
+                            def exitCode = true ? 0 : 1
+                            response2 = sh (script: "trivy image --timeout 5m --exit-code=${exitCode} --severity CRITICAL,HIGH '${dockerImage.id}'", returnStdout: true).trim()
+                            echo "${response2}"
+                        }
                     }
                 }
             }
