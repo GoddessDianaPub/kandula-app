@@ -64,12 +64,16 @@ pipeline {
 
 		
         
-        stage('Create Schema') {
-            steps {
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'CREATE SCHEMA IF NOT EXISTS ${KANDULA_NAME};' -W"
-                sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public IF NOT EXISTS;' -W"
-            }
-        }
+		stage('Create Schema') {
+			steps {
+				sh """
+					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "SELECT 1 FROM pg_namespace WHERE nspname='${KANDULA_NAME}'" | grep -q 1 ||
+					echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE SCHEMA ${KANDULA_NAME}"
+				"""
+				sh "echo '${DATABASE_PASSWORD}' | psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c 'GRANT ALL PRIVILEGES ON SCHEMA ${KANDULA_NAME} TO public'"
+			}
+		}
+
         
         stage('Create shutdown table') {
             steps {
