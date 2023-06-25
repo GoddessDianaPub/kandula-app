@@ -143,19 +143,13 @@ pipeline {
                 sh "sed -i 's|image: .*|image: ${REPOSITORY_URI}:${env.BUILD_ID}|g' kandula-manifests/kandula-app.yaml"
                 sh "kubectl apply -f kandula-manifests/kandula-app.yaml"
                 }
-              }
-
+              }  
+                 
         stage('Create an ingress') {
            steps {
-                script {
-                    try {
-                        sh 'kubectl apply -f kandula-manifests/kandula-ingress.yaml --dry-run=client -o yaml | kubectl apply -f -'
-                    } catch (Exception e) {
-                        echo "Ingress 'kandula-ingress' is already exists. Skipping Ingress creation."
-                    }
-                }
-            }
-        }
+                 sh 'kubectl apply -f kandula-manifests/kandula-ingress.yaml'
+           }
+       }
   
     }
     post {
