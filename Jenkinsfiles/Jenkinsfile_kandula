@@ -32,7 +32,7 @@ pipeline {
         REPO_URL              = "https://github.com/GoddessDianas/kandula-app.git"
         REPO_DIR              = "kandula-app-k8s"
         PYTHON_APP_IMAGE      = "python:3.9-slim"
-        CLUSTER_NAME          = "opsschool-eks-UoFIG5U3"
+        CLUSTER_NAME          = "opsschool-eks-FMRMBsfL"
     }
     
     stages {
@@ -143,7 +143,13 @@ pipeline {
                 sh "sed -i 's|image: .*|image: ${REPOSITORY_URI}:${env.BUILD_ID}|g' kandula-manifests/kandula-app.yaml"
                 sh "kubectl apply -f kandula-manifests/kandula-app.yaml"
                 }
-              }         
+              }  
+                 
+        stage('Create an ingress') {
+           steps {
+                 sh 'kubectl apply -f kandula-manifests/kandula-ingress.yaml'
+           }
+       }
   
     }
     post {
