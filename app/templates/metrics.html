@@ -3,10 +3,8 @@
 {% block content %}
 <div class="content-section mt-2">
     <h2>Prometheus Metrics</h2>
-    <pre>
-        {% for line in prometheus_metrics.split(b'\n') %}
-            {{ line.decode('utf-8') }}<br>
-        {% endfor %}
+    <pre>{% for line in prometheus_metrics.split(b'\n') %}
+        {{ line.decode('utf-8') }}<br>{% endfor %}
     </pre>
 </div>
-{% endblock %}
+{% endblock content %}
