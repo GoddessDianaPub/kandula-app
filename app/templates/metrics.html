@@ -1,17 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <style>
-    html, body {
-        height: 100%;
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
         margin: 0;
         padding: 0;
-    }
-
-    .metrics-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
     }
 
     .metrics-content {
@@ -19,12 +16,10 @@
         border: 1px solid #ccc;
         padding: 10px;
         max-width: 800px;
-        width: 100%;
+        width: 90%;
     }
 </style>
-<div class="metrics-container">
-    <div class="metrics-content">
-        <pre>{{ prometheus_metrics | safe }}</pre>
-    </div>
+<div class="metrics-content">
+    <pre>{{ prometheus_metrics | safe }}</pre>
 </div>
 {% endblock content %}
