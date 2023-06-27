@@ -14,6 +14,7 @@ def cli(debug):
     if debug:
         click.echo('Debug mode is enabled')
 
+           
 @cli.command(help='Lists all AWS instances')
 def list():
     response = ec2_client.describe_instances()
@@ -27,17 +28,23 @@ def list():
             instance_id = instance['InstanceId']
             tags = instance.get('Tags', [])
             name_tag = next((tag['Value'] for tag in tags if tag['Key'] == 'Name'), None)
+            public_ip = instance.get('PublicIpAddress', None)
+            private_ip = instance.get('PrivateIpAddress', None)
             state = instance['State']['Name']
-            instances_list.append((instance_id, name_tag, state))
+            instances_list.append((instance_id, name_tag, public_ip, private_ip, state))
+
 
     # Sort the instances based on their state
-    instances_list.sort(key=lambda x: (x[2] != 'running', x[2] != 'stopped', x[2] != 'terminated'))
+    instances_list.sort(key=lambda x: (x[4] != 'running', x[4] != 'stopped', x[4] != 'terminated'))
 
-    for instance_id, name_tag, state in instances_list:
+    for instance_id, name_tag, public_ip, private_ip, state in instances_list:
         click.echo(f"Instance ID: {instance_id}")
         click.echo(f"Name: {name_tag}")
+        click.echo(f"Public IP: {public_ip}")
+        click.echo(f"Private IP: {private_ip}")
         click.echo(f"State: {state}")
         click.echo("-" * 30)
+
 
 @cli.command(help='View info about AWS instance')
 @click.option('--instance-id', prompt='Instance ID', help='ID of the instance to gather information about')
