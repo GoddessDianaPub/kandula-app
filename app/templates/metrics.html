@@ -1,25 +1,9 @@
 {% extends "layout.html" %}
-{% block content %}
-<style>
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-        padding: 0;
-    }
 
-    .metrics-content {
-        overflow: auto;
-        border: 1px solid #ccc;
-        padding: 10px;
-        max-width: 800px;
-        width: 90%;
-    }
-</style>
-<div class="metrics-content">
-    <pre>{{ prometheus_metrics | safe }}</pre>
+{% block content %}
+<div class="content-section mt-2">
+    <h2>Prometheus Metrics</h2>
 </div>
+
+<pre>{{ prometheus_metrics | safe }}</pre>
 {% endblock content %}
