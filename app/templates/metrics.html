@@ -1,39 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Prometheus Metrics</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .metric-section {
-            margin-top: 20px;
-        }
-        .metric-name {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .metric-values {
-            margin-left: 20px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Prometheus Metrics</h1>
-    <div class="metric-section">
-        <div class="metric-name">Prometheus Metrics</div>
-        <div class="metric-values">
-            <pre>
-{{ prometheus_metrics | safe }}
-            </pre>
-        </div>
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section mt-2">
+        we will use this tab for exporting promethes data, this will later be collected by the prometheus exporter and used in the monitoring session
     </div>
-    </div>
-</body>
-</html>
+ 
+{% endblock content %}

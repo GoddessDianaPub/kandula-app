@@ -2,10 +2,9 @@
 
 from flask import render_template, flash, url_for, request
 from dependency_injector.wiring import inject, Provide
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from werkzeug.utils import redirect
 
-from app.src.services import app_health, instance_shutdown_scheduling, metrics
+from app.src.services import app_health, instance_shutdown_scheduling
 from app.src.services.instance_actions import InstanceActions
 from app.src.services.instance_data import InstanceData
 from app.containers import Container
@@ -62,11 +61,6 @@ def health():
 
     return render_template('health.html', title='Application Health',
                            healthchecks=health_metrics), 200 if is_app_healthy else 500
-
-
-def metrics():
-    prometheus_metrics = generate_latest()
-    return render_template('metrics.html', prometheus_metrics=prometheus_metrics, title='Metrics')
 
 
 @inject
