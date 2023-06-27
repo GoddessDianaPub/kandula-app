@@ -1,4 +1,4 @@
-from prometheus_client import Counter, Gauge
+from prometheus_client import Counter, Gauge, generate_latest, text_string
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -44,6 +44,11 @@ def health():
 def about():
     handle_page_request('About')
     return 'About Page'
+    
+@app.route('/dashboard')
+def dashboard():
+    prometheus_metrics = text_string(generate_latest())
+    return render_template('dashboard.html', prometheus_metrics=prometheus_metrics, title='Dashboard')
 
 if __name__ == '__main__':
     app.run()
