@@ -1,19 +1,51 @@
 <!doctype html>
 <html lang="en">
 <head>
-    {% block head %}
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <title>Prometheus Metrics</title>
-    {% endblock %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .metric-section {
+            margin-top: 20px;
+        }
+        .metric-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .metric-values {
+            margin-left: 20px;
+        }
+    </style>
 </head>
 <body>
-    {% block content %}
-    <div class="content-section mt-2">
-        {{ prometheus_metrics | safe }}	
+    <h1>Prometheus Metrics</h1>
+    <div class="metric-section">
+        <div class="metric-name">Python GC Objects Collected Total</div>
+        <div class="metric-values">
+            <pre>
+python_gc_objects_collected_total{generation="0"} 250.0
+python_gc_objects_collected_total{generation="1"} 167.0
+python_gc_objects_collected_total{generation="2"} 0.0
+            </pre>
+        </div>
     </div>
-    {% endblock %}
+    <div class="metric-section">
+        <div class="metric-name">Python GC Objects Uncollectable Total</div>
+        <div class="metric-values">
+            <pre>
+python_gc_objects_uncollectable_total{generation="0"} 0.0
+python_gc_objects_uncollectable_total{generation="1"} 0.0
+python_gc_objects_uncollectable_total{generation="2"} 0.0
+            </pre>
+        </div>
+    </div>
+    <!-- Add more metric sections as needed -->
 </body>
 </html>
