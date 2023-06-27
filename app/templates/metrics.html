@@ -2,65 +2,8 @@
 
 {% block content %}
 <div class="content-section mt-2">
-    <h2>Prometheus Metrics Dashboard</h2>
-    <!-- Add your custom dashboard design and visualization code here -->
-    <canvas id="counter-chart"></canvas>
-    <canvas id="gauge-chart"></canvas>
+    <h2>Prometheus Metrics</h2>
+    <pre>{{ prometheus_metrics | safe }}</pre>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Get the Prometheus metrics data from the Flask app
-    var prometheusMetrics = {{ prometheus_metrics | safe }};
-
-    // Extract the required metric values
-    var homeHits = prometheusMetrics['kandula_page_hits_total'].value || 0;
-    var inProgressRequests = prometheusMetrics['kandula_inprogress_requests'].value || 0;
-
-    // Create a counter chart
-    new Chart(document.getElementById('counter-chart'), {
-        type: 'bar',
-        data: {
-            labels: ['Home'],
-            datasets: [{
-                label: 'Page Hits',
-                data: [homeHits],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Create a gauge chart
-    new Chart(document.getElementById('gauge-chart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['In-Progress Requests'],
-            datasets: [{
-                data: [inProgressRequests],
-                backgroundColor: ['rgba(255, 99, 132, 0.2)'],
-                borderColor: ['rgba(255, 99, 132, 1)'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            cutout: '80%',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
-</script>
 {% endblock content %}
+
