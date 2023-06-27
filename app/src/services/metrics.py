@@ -1,19 +1,16 @@
-from prometheus_client import Counter, Gauge
+from prometheus_client import Counter, Gauge, generate_latest
 from flask import Flask, render_template
 
 app = Flask(__name__)
-page_hits_counter = Counter('kandula_page_hits', 'Number of times each page was hit')
+page_hits_counter = Counter('kandula_page_hits_total', 'Number of times each page was hit')
 inprogress_requests_gauge = Gauge('kandula_inprogress_requests', 'Number of in-progress requests')
 
 def handle_page_request(page):
     page_hits_counter.labels(page=page).inc()
-
     process_request(page)
 
 def process_request(page):
     inprogress_requests_gauge.inc()
-
-    inprogress_requests_gauge.dec()
 
 @app.route('/')
 def home():
@@ -32,8 +29,8 @@ def scheduling():
 
 @app.route('/metrics')
 def metrics():
-    handle_page_request('Metrics')
-    return 'Metrics Page'
+    prometheus_metrics = generate_latest()
+    return render_template('metrics.html', prometheus_metrics=prometheus_metrics, title='Metrics')
 
 @app.route('/health')
 def health():
