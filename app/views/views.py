@@ -66,7 +66,7 @@ def health():
 
 def metrics():
     prometheus_metrics = generate_latest()
-    return render_template('metrics.html', title='metrics', )
+    return render_template('metrics.html', prometheus_metrics=prometheus_metrics, title='Metrics')
 
 
 @inject
