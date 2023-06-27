@@ -3,19 +3,64 @@
 {% block content %}
 <div class="content-section mt-2">
     <h2>Prometheus Metrics Dashboard</h2>
-
-    <h3>Page Hits Counter:</h3>
-    <p>Number of times each page was hit:</p>
-    <ul>
-        <li>Home: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
-        <li>Instances: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
-        <li>Scheduling: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
-        <li>Metrics: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
-        <li>Health: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
-        <li>About: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
-    </ul>
-
-    <h3>In-Progress Requests Gauge:</h3>
-    <p>Number of in-progress requests: {{ prometheus_metrics['kandula_inprogress_requests']['value'] }}</p>
+    <!-- Add your custom dashboard design and visualization code here -->
+    <canvas id="counter-chart"></canvas>
+    <canvas id="gauge-chart"></canvas>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Get the Prometheus metrics data from the Flask app
+    var prometheusMetrics = {{ prometheus_metrics | safe }};
+
+    // Extract the required metric values
+    var homeHits = prometheusMetrics['kandula_page_hits_total'].value || 0;
+    var inProgressRequests = prometheusMetrics['kandula_inprogress_requests'].value || 0;
+
+    // Create a counter chart
+    new Chart(document.getElementById('counter-chart'), {
+        type: 'bar',
+        data: {
+            labels: ['Home'],
+            datasets: [{
+                label: 'Page Hits',
+                data: [homeHits],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Create a gauge chart
+    new Chart(document.getElementById('gauge-chart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['In-Progress Requests'],
+            datasets: [{
+                data: [inProgressRequests],
+                backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+                borderColor: ['rgba(255, 99, 132, 1)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            cutout: '80%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
 {% endblock content %}
