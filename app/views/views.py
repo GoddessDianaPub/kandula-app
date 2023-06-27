@@ -63,6 +63,10 @@ def health():
                            healthchecks=health_metrics), 200 if is_app_healthy else 500
 
 
+def metrics():
+    return render_template('metrics.html', title='metrics', )
+
+
 @inject
 def instances(instance_data: InstanceData = Provide[Container.instance_data]):
     instances_response = instance_data.get_instances()
