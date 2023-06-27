@@ -45,7 +45,7 @@ def about():
     
 @app.route('/dashboard')
 def dashboard():
-    prometheus_metrics = generate_latest()
+    prometheus_metrics = text_string(generate_latest()).decode('utf-8')
     return render_template('dashboard.html', prometheus_metrics=prometheus_metrics, title='Dashboard')
 
 if __name__ == '__main__':
