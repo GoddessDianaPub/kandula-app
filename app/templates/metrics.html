@@ -7,15 +7,15 @@
     <h3>Page Hits Counter:</h3>
     <p>Number of times each page was hit:</p>
     <ul>
-        <li>Home: {{ prometheus_metrics.counters.kandula_page_hits_total.labels(page="Home") }}</li>
-        <li>Instances: {{ prometheus_metrics.counters.kandula_page_hits_total.labels(page="Instances") }}</li>
-        <li>Scheduling: {{ prometheus_metrics.counters.kandula_page_hits_total.labels(page="Scheduling") }}</li>
-        <li>Metrics: {{ prometheus_metrics.counters.kandula_page_hits_total.labels(page="Metrics") }}</li>
-        <li>Health: {{ prometheus_metrics.counters.kandula_page_hits_total.labels(page="Health") }}</li>
-        <li>About: {{ prometheus_metrics.counters.kandula_page_hits_total.labels(page="About") }}</li>
+        <li>Home: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
+        <li>Instances: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
+        <li>Scheduling: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
+        <li>Metrics: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
+        <li>Health: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
+        <li>About: {{ prometheus_metrics['kandula_page_hits_total']['value'].labels.page }}</li>
     </ul>
 
     <h3>In-Progress Requests Gauge:</h3>
-    <p>Number of in-progress requests: {{ prometheus_metrics.gauges.kandula_inprogress_requests }}</p>
+    <p>Number of in-progress requests: {{ prometheus_metrics['kandula_inprogress_requests']['value'] }}</p>
 </div>
 {% endblock content %}

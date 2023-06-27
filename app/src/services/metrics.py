@@ -1,4 +1,4 @@
-from prometheus_client import Counter, Gauge, generate_latest
+import prometheus_client
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -43,10 +43,24 @@ def about():
     handle_page_request('About')
     return 'About Page'
     
+import prometheus_client
+
 @app.route('/dashboard')
 def dashboard():
-    prometheus_metrics = text_string(generate_latest()).decode('utf-8')
-    return render_template('dashboard.html', prometheus_metrics=prometheus_metrics, title='Dashboard')
+    prometheus_metrics = prometheus_client.generate_latest()
+    parsed_metrics = prometheus_client.parser.text_string_to_metric_families(prometheus_metrics)
+
+    metrics_dict = {}
+    for metric in parsed_metrics:
+        metric_name = metric.name
+        metric_data = {}
+        for sample in metric.samples:
+            labels = {key: value for key, value in sample.labels.items()}
+            metric_data[sample.name] = (sample.value, labels)
+        metrics_dict[metric_name] = metric_data
+
+    return render_template('dashboard.html', prometheus_metrics=metrics_dict, title='Dashboard')
+
 
 if __name__ == '__main__':
     app.run()
