@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
+
 {% block content %}
-    <div class="content-section mt-2">
-        we will use this tab for exporting promethes data, this will later be collected by the prometheus exporter and used in the monitoring session
-    </div>
- 
+<div class="content-section mt-2">
+    <h2>Prometheus Metrics</h2>
+    <pre>{{ prometheus_metrics }}</pre>
+</div>
 {% endblock content %}

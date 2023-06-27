@@ -5,7 +5,7 @@ from dependency_injector.wiring import inject, Provide
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from werkzeug.utils import redirect
 
-from app.src.services import app_health, instance_shutdown_scheduling, metrics
+from app.src.services import app_health, instance_shutdown_scheduling
 from app.src.services.instance_actions import InstanceActions
 from app.src.services.instance_data import InstanceData
 from app.containers import Container
