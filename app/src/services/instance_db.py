@@ -31,6 +31,8 @@ cursor = conn.cursor()
 
 
 def get_scheduling():
+    if "instances_scheduler" not in instance_schedule:
+        instance_schedule["instances_scheduler"] = []
     try:
         cursor.execute(get_query)
         rows = cursor.fetchall()
