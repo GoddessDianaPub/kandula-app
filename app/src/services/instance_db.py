@@ -60,13 +60,12 @@ def create_scheduling(instance_id, shutdown_hour):
         log.info("Instance %s will be shutdown every day at %s", instance_id, shutdown_hour)
 
 
-def delete_scheduling(instance_id):
+
+def delete_scheduling(instance_id, instance_schedule):
     cursor.execute("DELETE FROM instances_scheduler WHERE instance_id = %s", (instance_id,))
     try:
-        index = next((i for i, inst in enumerate(instance_schedule) if inst["instance_id"] == instance_id))
-        instance_schedule.pop(index)
-        log.info("Instance %s was removed from scheduling", instance_id)
-    except StopIteration:
-        log.info("Instance %s was not there to begin with", instance_id)
-
-
+        index = [k['instance_id'] for k in instance_schedule["instances_scheduler"]].index(instance_id)
+        instance_schedule["instances_scheduler"].pop(index)
+        log.info("Instance {} was removed from scheduling".format(instance_id))
+    except Exception:
+        log.info("Instance {} was not there to begin with".format(instance_id))
