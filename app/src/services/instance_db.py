@@ -48,10 +48,10 @@ def create_scheduling(instance_id, shutdown_hour):
     cursor.execute("INSERT INTO instances_scheduler (instance_id, shutdown_time) VALUES (%s, %s)", (instance_id, shutdown_hour[0:2]))
     try:
         index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["instance_id"] == instance_id))
-        instance_schedule["instances_scheduler"][index] = {"instance_id": instance_id, "shutdown_time": int(shutdown_hour[0:2])}
+        instance_schedule["instances_scheduler"][index] = {"instance_id": instance_id, "shutdown_time"
         log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
     except StopIteration:
-        instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": int(shutdown_hour[0:2])})
+        instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time"
         log.info("Instance %s will be shutdown every day when the hour is %s", instance_id, shutdown_hour)
 
 
