@@ -50,14 +50,6 @@ pipeline {
              }
         }
          
-//         // Restarting Docker     
-//         stage ('Start Docker') {
-//              steps {
-//                  sh 'sudo service docker start'
-//              }
-//         }
-
-         
         // Building Docker images
         stage ('Building latest image') {
             steps {
