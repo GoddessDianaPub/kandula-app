@@ -30,35 +30,35 @@ cursor = conn.cursor()
 
 
 def get_scheduling():
-    get_query = "SELECT id, dailyshutdownhour FROM instances_scheduler"
+    get_query = "SELECT instance_id, shutdown_time FROM instances_scheduler"
     try:
         cursor.execute(get_query)
         rows = cursor.fetchall()
         for r in rows:
             try:
-                id, time = r
+                instance_id, shutdown_time = r
             except Exception:
-                instance_schedule["instances_scheduler"].append({"id": id, "shutdown_time": time})
+                instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": shutdown_time})
         return instance_schedule
     except psycopg2.Error as error:
         log.error("Error retrieving data from the database: %s", error)
 
 
 def create_scheduling(instance_id, shutdown_hour):
-    cursor.execute("INSERT INTO instances_scheduler (id, dailyshutdownhour) VALUES (%s, %s)", (instance_id, shutdown_hour[0:2]))
+    cursor.execute("INSERT INTO instances_scheduler (instance_id, shutdown_time) VALUES (%s, %s)", (instance_id, shutdown_hour[0:2]))
     try:
-        index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["id"] == instance_id))
-        instance_schedule["instances_scheduler"][index] = {"id": instance_id, "shutdown_time": int(shutdown_hour[0:2])}
+        index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["instance_id"] == instance_id))
+        instance_schedule["instances_scheduler"][index] = {"instance_id": instance_id, "shutdown_time": int(shutdown_hour[0:2])}
         log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
     except StopIteration:
-        instance_schedule["instances_scheduler"].append({"id": instance_id, "daily_shutdown_hour": int(shutdown_hour[0:2])})
+        instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": int(shutdown_hour[0:2])})
         log.info("Instance %s will be shutdown every day when the hour is %s", instance_id, shutdown_hour)
 
 
 def delete_scheduling(instance_id):
-    cursor.execute("DELETE FROM instances_scheduler WHERE id = %s", (instance_id,))
+    cursor.execute("DELETE FROM instances_scheduler WHERE instance_id = %s", (instance_id,))
     try:
-        index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["id"] == instance_id))
+        index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["instance_id"] == instance_id))
         instance_schedule["instances_scheduler"].pop(index)
         log.info("Instance %s was removed from scheduling", instance_id)
     except StopIteration:
