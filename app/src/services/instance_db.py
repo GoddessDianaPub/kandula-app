@@ -71,3 +71,14 @@ def delete_scheduling(instance_id):
     except StopIteration:
         instance_schedule["instances_scheduler"].pop(index)
         log.info("Instance %s was not there to begin with", instance_id)
+
+def delete_scheduling(instance_id):
+    cursor.execute("DELETE FROM instances_scheduler WHERE instance_id = %s", (instance_id,))
+    try:
+        index = next((i for i, inst in enumerate(instance_schedule) if inst["instance_id"] == instance_id))
+        instance_schedule.pop(index)
+        log.info("Instance %s was removed from scheduling", instance_id)
+    except StopIteration:
+        log.info("Instance %s was not there to begin with", instance_id)
+
+
