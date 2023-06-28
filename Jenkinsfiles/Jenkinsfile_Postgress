@@ -117,7 +117,7 @@ pipeline {
 					}
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "CREATE USER ${KANDULA_NAME} WITH PASSWORD '${DATABASE_PASSWORD}';"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "CREATE USER ${KANDULA_NAME} WITH PASSWORD '${DATABASE_PASSWORD}';"
 						"""
 					} catch (Exception e) {
 						echo "User '${KANDULA_NAME}' already exists."
@@ -148,7 +148,7 @@ pipeline {
 					
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE ${KANDULA_NAME}.instances_scheduler TO readwrite;"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE ${KANDULA_NAME}.instances_scheduler TO readwrite;"
 						"""
 					} catch (Exception e) {
 						echo "Permissions 'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE ${KANDULA_NAME}.instances_scheduler TO readwrite' already exist."
@@ -156,7 +156,7 @@ pipeline {
 					
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "GRANT USAGE ON ALL SEQUENCES IN SCHEMA ${KANDULA_NAME} TO readwrite;"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "GRANT USAGE ON ALL SEQUENCES IN SCHEMA ${KANDULA_NAME} TO readwrite;"
 						"""
 					} catch (Exception e) {
 						echo "Permissions 'GRANT USAGE ON ALL SEQUENCES IN SCHEMA ${KANDULA_NAME} TO readwrite' already exist."
@@ -164,7 +164,7 @@ pipeline {
 					
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "GRANT readwrite TO ${KANDULA_NAME};"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "GRANT readwrite TO ${KANDULA_NAME};"
 						"""
 					} catch (Exception e) {
 						echo "Permissions 'GRANT readwrite TO ${KANDULA_NAME}' already exist."
@@ -172,7 +172,7 @@ pipeline {
 					
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA ${KANDULA_NAME} GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO readwrite;"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "ALTER DEFAULT PRIVILEGES IN SCHEMA ${KANDULA_NAME} GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO readwrite;"
 						"""
 					} catch (Exception e) {
 						echo "Permissions 'ALTER DEFAULT PRIVILEGES IN SCHEMA ${KANDULA_NAME}' already exist."
@@ -180,11 +180,27 @@ pipeline {
 					
 					try {
 						sh """
-							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d postgres -U ${DATABASE_USER} -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite;"
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite;"
 						"""
 					} catch (Exception e) {
 						echo "Permissions 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${KANDULA_NAME} TO readwrite' already exist."
-					}	
+					}
+                                        
+                                        try {
+						sh """
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "ALTER TABLE ${KANDULA_NAME}.instances_scheduler OWNER TO readwrite;"
+						"""
+					} catch (Exception e) {
+						echo "Permissions 'ALTER TABLE ${KANDULA_NAME}.instances_scheduler OWNER TO readwrite' already exist."
+					}                                         
+                                                                                 
+                                        try {
+						sh """
+							echo '${DATABASE_PASSWORD}' | PGPASSWORD="${DATABASE_PASSWORD}" psql -h ${HOST} -p ${PORT} -d ${KANDULA_NAME} -U ${DATABASE_USER} -c "ALTER TABLE ${KANDULA_NAME}.instances_shutdown_log OWNER TO readwrite;"
+						"""
+					} catch (Exception e) {
+						echo "Permissions 'ALTER TABLE ${KANDULA_NAME}.instances_shutdown_log OWNER TO readwrite' already exist."
+					} 
 				}
 			}
 		}
