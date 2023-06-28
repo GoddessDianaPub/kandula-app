@@ -80,7 +80,7 @@ def scheduler():
 
     scheduled_instances = instance_shutdown_scheduling.get_scheduled_instances()
     if scheduled_instances is not None and isinstance(scheduled_instances, list):
-        instances = scheduled_instances.get("Instances", [])
+        instances = scheduled_instances
     else:
         instances = []
 
