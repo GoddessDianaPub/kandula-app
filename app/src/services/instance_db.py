@@ -37,21 +37,22 @@ def get_scheduling():
         for r in rows:
             try:
                 instance_id, shutdown_time = r
-            except Exception:
                 instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": shutdown_time})
+            except Exception:
+                log.error("Error parsing data: %s", r)
         return instance_schedule
     except psycopg2.Error as error:
         log.error("Error retrieving data from the database: %s", error)
 
 
 def create_scheduling(instance_id, shutdown_hour):
-    cursor.execute("INSERT INTO instances_scheduler (instance_id, shutdown_time) VALUES (%s, %s)", (instance_id, shutdown_hour[0:2]))
+    cursor.execute("INSERT INTO instances_scheduler (instance_id, shutdown_time) VALUES (%s, %s)", (instance_id, shutdown_hour))
     try:
         index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["instance_id"] == instance_id))
-        instance_schedule["instances_scheduler"][index] = {"instance_id": instance_id, "shutdown_time"
+        instance_schedule["instances_scheduler"][index] = {"instance_id": instance_id, "shutdown_time": shutdown_hour}
         log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
     except StopIteration:
-        instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time"
+        instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": shutdown_hour})
         log.info("Instance %s will be shutdown every day when the hour is %s", instance_id, shutdown_hour)
 
 
@@ -62,6 +63,7 @@ def delete_scheduling(instance_id):
         instance_schedule["instances_scheduler"].pop(index)
         log.info("Instance %s was removed from scheduling", instance_id)
     except StopIteration:
+        instance_schedule["instances_scheduler"].pop(index)
         log.info("Instance %s was not there to begin with", instance_id)
 
 #def close_connection():
