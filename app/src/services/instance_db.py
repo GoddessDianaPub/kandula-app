@@ -29,10 +29,6 @@ conn.autocommit = True
 cursor = conn.cursor()
 
 
-def close_connection():
-    conn.close()
-
-
 def get_scheduling():
     get_query = "SELECT id, dailyshutdownhour FROM instances_scheduler"
     try:
@@ -68,4 +64,5 @@ def delete_scheduling(instance_id):
     except StopIteration:
         log.info("Instance %s was not there to begin with", instance_id)
 
-close_connection()
+#def close_connection():
+#    conn.close()
