@@ -1,8 +1,13 @@
-import json
 import psycopg2
-import datetime
+import logging
 
-# Variables
+instance_schedule = {
+    "instances": []
+}
+
+log = logging.getLogger()
+logging.basicConfig(level=logging.INFO)  # Configure logging level
+
 host = "rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com"
 port = 5432
 schema = "kandula"
@@ -20,119 +25,51 @@ conn = psycopg2.connect(
     password=password
 )
 
+conn.autocommit = True
+cursor = conn.cursor()
+
+
+def close_connection():
+    conn.close()
+
 
 def get_scheduling():
-    instance_schedule = []
+    get_query = "SELECT id, dailyshutdownhour FROM instances_scheduler"
     try:
-        cursor = conn.cursor()
-        query = "SELECT instance_id, shutdown_time FROM {}".format(scheduler_table)
-        cursor.execute(query)
+        cursor.execute(get_query)
         rows = cursor.fetchall()
-
-        if rows:
-            for row in rows:
-                instance_id, shutdown_time = row
-                instance_schedule.append({
-                    "instance_id": instance_id,
-                    "shutdown_time": str(shutdown_time)
-                })
-
-    except Exception as e:
-        print("An error occurred while retrieving the scheduling:", str(e))
-
+        for r in rows:
+            try:
+                id, time = r
+            except Exception:
+                instance_schedule["instances_scheduler"].append({"id": id, "shutdown_time": time})
+        return instance_schedule
+    except psycopg2.Error as error:
+        log.error("Error retrieving data from the database: %s", error)
     finally:
-        if cursor:
-            cursor.close()
-
-    return instance_schedule
-
-scheduling_data = get_scheduling()
-
-json_data = json.dumps(scheduling_data)
-
-print(json_data)
+        cursor.close()
 
 
-
-def create_scheduling(instance_id, shutdown_time):
+def create_scheduling(instance_id, shutdown_hour):
+    cursor.execute("INSERT INTO instances_scheduler (id, dailyshutdownhour) VALUES (%s, %s)", (instance_id, shutdown_hour[0:2]))
     try:
-        cursor = conn.cursor()
-
-        # Check if shutdown_time is already in the expected format
-        if not isinstance(shutdown_time, str):
-            print("Invalid shutdown time format for instance {}. Please check the time format.".format(instance_id))
-            return
-
-        query = "SELECT instance_id, shutdown_time FROM {} WHERE instance_id = %s".format(scheduler_table)
-        cursor.execute(query, (instance_id,))
-        existing_instance = cursor.fetchone()
-
-        if existing_instance:
-            existing_shutdown_time = existing_instance[1]
-            if existing_shutdown_time is None:
-                print("Instance {} already has a shutdown time set as null.".format(instance_id))
-            else:
-                update_query = "UPDATE {} SET shutdown_time = %s WHERE instance_id = %s".format(scheduler_table)
-                cursor.execute(update_query, (shutdown_time, instance_id))
-                print("Instance {} shutdown time was updated to {}".format(instance_id, shutdown_time))
-        else:
-            insert_query = "INSERT INTO {} (instance_id, shutdown_time) VALUES (%s, %s)".format(scheduler_table)
-            cursor.execute(insert_query, (instance_id, shutdown_time))
-            print("Instance {} will be scheduled for shutdown every day at {}".format(instance_id, shutdown_time))
-
-        # Insert log entry
-        log_timestamp = datetime.datetime.now()
-        log_query = "INSERT INTO {} (instance_id, log_timestamp) VALUES (%s, %s)".format(log_table)
-        cursor.execute(log_query, (instance_id, log_timestamp))
-
-        conn.commit()
-
-    except Exception as e:
-        print("An error occurred while creating the scheduling:", str(e))
-        conn.rollback()
-
+        index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["id"] == instance_id))
+        instance_schedule["instances_scheduler"][index] = {"id": instance_id, "shutdown_time": int(shutdown_hour[0:2])}
+        log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
+    except StopIteration:
+        instance_schedule["instances_scheduler"].append({"id": instance_id, "daily_shutdown_hour": int(shutdown_hour[0:2])})
+        log.info("Instance %s will be shutdown every day when the hour is %s", instance_id, shutdown_hour)
     finally:
-        if cursor:
-            cursor.close()
+        cursor.close()
 
 
 def delete_scheduling(instance_id):
+    cursor.execute("DELETE FROM instances_scheduler WHERE id = %s", (instance_id,))
     try:
-        cursor = conn.cursor()
-        query = "SELECT instance_id FROM {} WHERE instance_id = %s".format(scheduler_table)
-        cursor.execute(query, (instance_id,))
-        existing_instance = cursor.fetchone()
-
-        if existing_instance:
-            delete_query = "DELETE FROM {} WHERE instance_id = %s".format(scheduler_table)
-            cursor.execute(delete_query, (instance_id,))
-
-            print("Instance {} was removed from scheduling".format(instance_id))
-        else:
-            print("Instance {} was not found in the scheduling".format(instance_id))
-
-        # Log the scheduling deletion
-        log_timestamp = datetime.now()
-        instancename = get_instance_name(instance_id)  # Replace with your logic to get the instance name
-        log_query = "INSERT INTO {} (instance_id, log_timestamp, instancename) VALUES (%s, %s, %s)".format(log_table)
-        cursor.execute(log_query, (instance_id, log_timestamp, instancename))
-
-        conn.commit()
-
-    except Exception as e:
-        print("An error occurred while deleting the scheduling:", str(e))
-        conn.rollback()
-
+        index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["id"] == instance_id))
+        instance_schedule["instances_scheduler"].pop(index)
+        log.info("Instance %s was removed from scheduling", instance_id)
+    except StopIteration:
+        log.info("Instance %s was not there to begin with", instance_id)
     finally:
-        if cursor:
-            cursor.close()
-
-
-# Rollback the current transaction explicitly
-def rollback_transaction():
-    conn.rollback()
-
-
-# Close the connection when it's no longer needed
-def close_connection():
-    conn.close()
+        cursor.close()
