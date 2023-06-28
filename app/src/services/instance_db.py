@@ -1,9 +1,9 @@
 import psycopg2
 import logging
 
-instance_schedule = {
-    "instances": []
-}
+#instance_schedule = {
+#    "instances": []
+#}
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -25,21 +25,21 @@ conn = psycopg2.connect(
     password=password
 )
 
-get_query = 'SELECT * FROM instances_scheduler'
+#get_query = 'SELECT * FROM instances_scheduler'
 conn.autocommit = True
 cursor = conn.cursor()
 
 
 def get_scheduling():
-    if "instances_scheduler" not in instance_schedule:
-        instance_schedule["instances_scheduler"] = []
+    instance_schedule = []
+    get_query = "SELECT instance_id, shutdown_time FROM instances_scheduler"
     try:
         cursor.execute(get_query)
         rows = cursor.fetchall()
         for r in rows:
             try:
                 instance_id, shutdown_time = r
-                instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": shutdown_time})
+                instance_schedule.append({"instance_id": instance_id, "shutdown_time": shutdown_time})
             except Exception:
                 log.error("Error parsing data: %s", r)
         return instance_schedule
@@ -55,7 +55,7 @@ def create_scheduling(instance_id, shutdown_hour):
         log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
     except StopIteration:
         instance_schedule["instances_scheduler"].append({"instance_id": instance_id, "shutdown_time": shutdown_hour})
-        log.info("Instance %s will be shutdown every day when the hour is %s", instance_id, shutdown_hour)
+        log.info("Instance %s will be shutdown every day at %s", instance_id, shutdown_hour)
 
 
 def delete_scheduling(instance_id):
