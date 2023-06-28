@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-<h4> 📆 Daily Instances Scheduler Shutdown </h4>
+<h2> 📆 Instance Shutdown Scheduler </h2>
 <article class="media content-section">
     <div class="media-body">
         <table cellpadding="10">
             <thead>
-            <td><h5>Instance Id</h5></td>
-            <td><h5>Scheduled Shutdown</h5></td>
+            <td><h4>Instance Id</h4></td>
+            <td><h4>Next Expected Shutdown</h4></td>
             <td></td>
             </thead>
             {% for instance in scheduled_instances %}
