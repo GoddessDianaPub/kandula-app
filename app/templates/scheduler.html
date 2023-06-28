@@ -11,11 +11,11 @@
             </thead>
             {% for instance in scheduled_instances %}
             <form action="{{ url_for('scheduler') }}" method="post">
-                <input type="hidden" id="instanceIdToRemove" name="instanceIdToRemove" value="{{ instance.Id }}">
+                <input type="hidden" id="instanceIdToRemove" name="instanceIdToRemove" value="{{ instance.instance_id }}">
                 <input type="hidden" id="instanceScheduleAction" name="instanceScheduleAction" value="delete">
                 <tr>
-                    <td><strong>{{ instance.Id }}</strong></td>
-                    <td>{{ instance.DailyShutdownHour | today_scheduling() }}</td>
+                    <td><strong>{{ instance.instance_id }}</strong></td>
+                    <td>{{ instance.shutdown_time | today_scheduling() }}</td>
                     <td>
                         <button class="btn small"
                                 title="Remove scheduled shutdown of instance"
