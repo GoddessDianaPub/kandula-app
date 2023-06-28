@@ -6,7 +6,7 @@ instance_schedule = {
 }
 
 log = logging.getLogger()
-logging.basicConfig(level=logging.INFO)  # Configure logging level
+logging.basicConfig(level=logging.INFO)
 
 host = "rds-db-instance-0.cihzevxi90ql.us-east-1.rds.amazonaws.com"
 port = 5432
@@ -46,8 +46,9 @@ def get_scheduling():
         return instance_schedule
     except psycopg2.Error as error:
         log.error("Error retrieving data from the database: %s", error)
-    finally:
-        cursor.close()
+     finally:
+        if cursor:
+            cursor.close()
 
 
 def create_scheduling(instance_id, shutdown_hour):
@@ -59,8 +60,9 @@ def create_scheduling(instance_id, shutdown_hour):
     except StopIteration:
         instance_schedule["instances_scheduler"].append({"id": instance_id, "daily_shutdown_hour": int(shutdown_hour[0:2])})
         log.info("Instance %s will be shutdown every day when the hour is %s", instance_id, shutdown_hour)
-    finally:
-        cursor.close()
+     finally:
+        if cursor:
+            cursor.close()
 
 
 def delete_scheduling(instance_id):
@@ -71,5 +73,6 @@ def delete_scheduling(instance_id):
         log.info("Instance %s was removed from scheduling", instance_id)
     except StopIteration:
         log.info("Instance %s was not there to begin with", instance_id)
-    finally:
-        cursor.close()
+     finally:
+        if cursor:
+            cursor.close()
