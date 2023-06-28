@@ -79,10 +79,9 @@ def scheduler():
         instance_shutdown_scheduling.handle_instance(request.form)
 
     scheduled_instances = instance_shutdown_scheduling.get_scheduled_instances()
-    if scheduled_instances is not None and isinstance(scheduled_instances, dict):
-        instances = scheduled_instances.get("Instances", [])
+    if scheduled_instances is not None and isinstance(scheduled_instances, list):
+        instances = scheduled_instances
     else:
         instances = []
 
-    return render_template('scheduler.html', title='Scheduling', scheduled_instances=instances)
-
+    return render_template('scheduler.html', title='Scheduling', scheduled_instances=instances)                           
