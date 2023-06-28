@@ -115,16 +115,19 @@ def create_scheduling(instance_id, shutdown_hour):
     cursor.execute("INSERT INTO instances_scheduler (instance_id, shutdown_time) VALUES (%s, %s)", (instance_id, shutdown_hour))
     try:
         instance_schedule = get_scheduling()
-        index = next((i for i, inst in enumerate(instance_schedule) if inst["instance_id"] == instance_id))
-        instance_schedule[index] = {"instance_id": instance_id, "shutdown_time": shutdown_hour}
-        log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
+        index = next((i for i, inst in enumerate(instance_schedule) if inst["instance_id"] == instance_id), None)
+        if index is not None:
+            instance_schedule[index]["shutdown_time"] = shutdown_hour
+            log.info("Instance %s will be shutdown, updated to the hour %s", instance_id, shutdown_hour)
+        else:
+            instance_schedule.append({"instance_id": instance_id, "shutdown_time": shutdown_hour})
+            log.info("Instance %s will be shutdown every day at %s", instance_id, shutdown_hour)
     except StopIteration:
         instance_schedule.append({"instance_id": instance_id, "shutdown_time": shutdown_hour})
         log.info("Instance %s will be shutdown every day at %s", instance_id, shutdown_hour)
 
 
-
-def delete_scheduling(instance_id, instance_schedule):
+def delete_scheduling(instance_id):
     cursor.execute("DELETE FROM instances_scheduler WHERE instance_id = %s", (instance_id,))
     try:
         instance_schedule = get_scheduling()
@@ -134,3 +137,4 @@ def delete_scheduling(instance_id, instance_schedule):
     except StopIteration:
         instance_schedule.pop(index)
         log.info("Instance %s was not there to begin with", instance_id)
+
