@@ -64,6 +64,7 @@ def create_scheduling(instance_id, shutdown_hour):
 def delete_scheduling(instance_id):
     cursor.execute("DELETE FROM instances_scheduler WHERE instance_id = %s", (instance_id,))
     try:
+        instance_schedule = get_scheduling()
         index = next((i for i, inst in enumerate(instance_schedule["instances_scheduler"]) if inst["instance_id"] == instance_id))
         instance_schedule["instances_scheduler"].pop(index)
         log.info("Instance %s was removed from scheduling", instance_id)
