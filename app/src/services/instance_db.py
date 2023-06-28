@@ -61,7 +61,7 @@ def create_scheduling(instance_id, shutdown_hour):
 
 
 
-def delete_scheduling(instance_id, instance_schedule):
+def delete_scheduling(instance_id):
     cursor.execute("DELETE FROM instances_scheduler WHERE instance_id = %s", (instance_id,))
     try:
         index = [k['instance_id'] for k in instance_schedule["instances_scheduler"]].index(instance_id)
