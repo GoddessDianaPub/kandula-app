@@ -25,12 +25,12 @@ conn = psycopg2.connect(
     password=password
 )
 
+get_query = 'SELECT * FROM instances_scheduler'
 conn.autocommit = True
 cursor = conn.cursor()
 
 
 def get_scheduling():
-    get_query = "SELECT instance_id, shutdown_time FROM instances_scheduler"
     try:
         cursor.execute(get_query)
         rows = cursor.fetchall()
