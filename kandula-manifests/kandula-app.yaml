@@ -62,7 +62,7 @@ spec:
       serviceAccountName: kandula-sa
       containers:
       - name: kandula-app
-        image: 735911875499.dkr.ecr.us-east-1.amazonaws.com/kandula:24
+        image: 
         ports:
         - containerPort: 5000
         envFrom:
