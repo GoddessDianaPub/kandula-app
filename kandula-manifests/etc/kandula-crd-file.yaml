@@ -1,9 +1,0 @@
----
-
-#Creates a custome resource definition
-
-apiVersion: kandula.com/v1
-kind: Kandula
-metadata:
-  name: kandula-app-cli
-spec:

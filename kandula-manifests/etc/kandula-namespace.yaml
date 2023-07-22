@@ -1,6 +1,0 @@
-#Create a namespace for kandula
-
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kandula
