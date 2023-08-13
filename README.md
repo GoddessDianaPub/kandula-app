@@ -22,3 +22,5 @@ This app is for managing AWS ec2 instances and schedulling.
 - There is a cli option to describe instances as well as stop, start and terminate instances, the file named: aws_cli.py
   - To use it type: "python aws_cli.py" on your terminal
   - Make sure you have the aws credentials configured with the appropriate permissions
+
+- I trying to make my project better all the time, so i am constantly updating this repo
