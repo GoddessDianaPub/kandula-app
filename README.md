@@ -11,7 +11,7 @@ This app is for managing AWS ec2 instances and schedulling.
 ## Notes
 
 - There is a webhook configured that trigger runs in jenkins ui, whenever a commit has been submitted to this repo.
-- Repo URI: <your uri>
+- Repo URI: (your uri)
 - Push commands can be found on ECR as follows: 
   - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin (Repo URI)
   - docker build -t (Repo URI):${env.BUILD_ID} .
