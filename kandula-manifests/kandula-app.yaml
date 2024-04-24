@@ -16,7 +16,7 @@ metadata:
   labels:
     app: kandula
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::735911875499:role/opsschool-project-sa-kandula
+    eks.amazonaws.com/role-arn: arn:aws:iam::<account-id>:role/opsschool-project-sa-kandula
     
 ---
     
